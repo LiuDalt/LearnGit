@@ -14,5 +14,8 @@ public class MainActivity extends AppCompatActivity {
         int a = 0 ;
         a--;
         Log.i("a=", a +"122");
+
+        a++;
+        a = a + 1;
     }
 }
