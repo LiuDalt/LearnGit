@@ -16,5 +16,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i("a=", a +"1");
 
         a++;
+        a = a + 1;
     }
 }
