@@ -13,6 +13,6 @@ public class MainActivity extends AppCompatActivity {
 
         int a = 0 ;
         a--;
-        Log.i("a=", a +"1");
+        Log.i("a=", a +"122");
     }
 }
