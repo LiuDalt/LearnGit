@@ -1,21 +1,30 @@
 package com.example.administrator.myapplication;
 
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.LinearLayout;
+
+import com.example.administrator.myapplication.databinding.ItemLayoutBinding;
 
 public class MainActivity extends AppCompatActivity {
+
+    private LinearLayout mRootLy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int a = 0 ;
-        a--;
-        Log.i("a=", a +"122");
+        mRootLy = findViewById(R.id.rootly);
+        dataBinding();
+    }
 
-        a++;
-        a = a + 1;
+    private void dataBinding() {
+        ItemLayoutBinding binding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_layout, mRootLy, true);
+        binding.tv1.setText("123342234");
+        binding.tv2.setText("23sdfsa");
     }
 }
