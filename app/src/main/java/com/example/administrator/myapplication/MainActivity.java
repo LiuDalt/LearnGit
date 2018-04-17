@@ -25,6 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private void dataBinding() {
         ItemLayoutBinding binding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_layout, mRootLy, true);
         binding.tv1.setText("123342234");
-        binding.tv2.setText("23sdfsa");
+        binding.tv2.setText("23sdfsaavba");
     }
 }
