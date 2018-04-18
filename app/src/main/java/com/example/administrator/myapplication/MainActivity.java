@@ -25,6 +25,6 @@ public class MainActivity extends AppCompatActivity {
     private void dataBinding() {
         ItemLayoutBinding binding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_layout, mRootLy, true);
         binding.tv2.setText("branch1");
-        binding.tv1.setText("master1111");
+        binding.tv1.setText("0000000");
     }
 }
