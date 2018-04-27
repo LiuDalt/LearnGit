@@ -6,5 +6,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     tools:context=".MainActivity">
+    <TextView
+        android:layout_marginTop="40dp"
+        android:textColor="@android:color/white"
+        android:text="hahahahahaha"
+        android:shadowColor="#cc000000"
+        android:shadowDy="1"
+        android:shadowRadius="3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
