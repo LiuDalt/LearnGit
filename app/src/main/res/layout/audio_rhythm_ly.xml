@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/audio_rhythm_ly"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.example.administrator.AudioRhythm.AudioWavView
+        android:id="@+id/audio_view"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:layout_height="80dp"/>
+    <LinearLayout
+        android:id="@+id/audio_slideview"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <TextView
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:id="@+id/audio_time_tv"
+            android:text="12s"
+            android:background="@android:color/holo_blue_bright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <View
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:background="#2F4F4F"
+            android:layout_width="2dp"
+            android:layout_height="wrap_content">
+        </View>
+        <TextView
+            android:layout_gravity="center_horizontal"
+            android:background="@android:color/holo_red_light"
+            android:layout_width="20dp"
+            android:layout_height="20dp"/>
+    </LinearLayout>
+</FrameLayout>

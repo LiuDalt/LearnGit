@@ -1,0 +1,33 @@
+package com.example.administrator.AudioRhythm;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.FrameLayout;
+
+import com.example.administrator.myapplication.R;
+
+import java.util.Random;
+
+public class AudioActivity extends AppCompatActivity {
+
+    private AudioRhythmView mAudioView;
+    private FrameLayout mSlideLy;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_audio);
+
+        mAudioView = findViewById(R.id.audio_rhythm_view);
+
+        findViewById(R.id.show_wavs).setOnClickListener(v -> {
+            mAudioView.setMusicPath("");
+        });
+
+    }
+
+
+
+
+
+}

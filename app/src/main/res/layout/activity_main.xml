@@ -7,4 +7,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
+    <Button
+        android:textAllCaps="false"
+        android:text="testRX"
+        android:id="@+id/btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:textAllCaps="false"
+        android:text="testAAC"
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+    android:textAllCaps="false"
+    android:id="@+id/annotation_btn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+    <Button
+        android:textAllCaps="false"
+        android:text="测试Room"
+        android:id="@+id/room_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/test_audio"
+        android:text="测试音轨"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

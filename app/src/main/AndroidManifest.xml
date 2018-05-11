@@ -16,6 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name="com.example.administrator.aac.TestAACActivity">
+        </activity>
+        <activity android:name="com.example.administrator.rooms.RoomActivity">
+        </activity>
+        <activity android:name="com.example.administrator.AudioRhythm.AudioActivity">
+        </activity>
     </application>
 
 </manifest>

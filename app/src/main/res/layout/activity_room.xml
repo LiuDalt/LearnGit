@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.administrator.rooms.RoomActivity">
+    <Button
+    android:textAllCaps="false"
+    android:text="add user"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    android:id="@+id/add_user"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"/>
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/add_user"
+        android:textAllCaps="false"
+        android:text="delete user"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/delete_user"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/delete_user"
+        android:textAllCaps="false"
+        android:text="update user"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/update_user"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/update_user"
+        android:textAllCaps="false"
+        android:text="query user"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:id="@+id/query_user"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+    <Button
+    app:layout_constraintTop_toBottomOf="@id/query_user"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    android:textAllCaps="false"
+    android:text="add userlist"
+    android:id="@+id/add_userlist"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"/>
+
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/add_userlist"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textAllCaps="false"
+        android:text="delete userlist"
+        android:id="@+id/delete_userlist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/delete_userlist"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textAllCaps="false"
+        android:text="update userlist"
+        android:id="@+id/update_userlist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        app:layout_constraintTop_toBottomOf="@id/update_userlist"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textAllCaps="false"
+        android:text="query simple UserInfo"
+        android:id="@+id/query_simpleinfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:textAllCaps="false"
+        android:id="@+id/user_info"
+        app:layout_constraintTop_toBottomOf="@id/query_simpleinfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+</android.support.constraint.ConstraintLayout>
