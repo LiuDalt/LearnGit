@@ -24,6 +24,10 @@ public class AudioActivity extends AppCompatActivity {
             mAudioView.setMusicPath("");
         });
 
+        findViewById(R.id.change_unavailable).setOnClickListener(v -> {
+            mAudioView.updateUnavailableTime(new Random().nextInt(8) * 1000);
+        });
+
     }
 
 
