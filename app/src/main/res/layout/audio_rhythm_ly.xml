@@ -1,46 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/audio_rhythm_ly"
+    android:background="@android:color/black"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.example.administrator.AudioRhythm.AudioWavView
-        android:id="@+id/audio_view"
-        android:layout_gravity="center"
-        android:layout_marginLeft="25dp"
-        android:layout_marginRight="25dp"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"/>
-    <View
-        android:id="@+id/unavailabe_mask_view"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="25dp"
-        android:background="#96FFDAB9"
-        android:layout_width="20dp"
-        android:layout_height="80dp"></View>
-    <LinearLayout
-        android:id="@+id/audio_slideview"
-        android:orientation="vertical"
+    android:layout_height="wrap_content">
+    <TextView
+        android:padding="0dp"
+        android:textColor="@android:color/white"
+        android:id="@+id/audio_time_tv"
+        android:text="0.1s"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_marginBottom="3.5dp"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/audio_time_tv"
-            android:text="8s"
-            android:gravity="center"
-            android:background="@android:color/holo_blue_bright"
-            android:layout_width="50dp"
-            android:layout_height="20dp"/>
+        android:layout_height="wrap_content"/>
+    <FrameLayout
+        android:id="@+id/audio_wav_ly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/audio_time_tv">
+
+        <com.example.administrator.AudioRhythm.AudioWavView
+            android:id="@+id/audio_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/audio_wav_height"
+            android:layout_marginLeft="@dimen/audio_wav_margin"
+            android:layout_marginRight="@dimen/audio_wav_margin"/>
         <View
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:background="#2F4F4F"
-            android:layout_width="2dp"
-            android:layout_height="wrap_content">
-        </View>
-        <TextView
-            android:layout_gravity="center_horizontal"
-            android:background="@android:color/holo_red_light"
+            android:id="@+id/unavailabe_mask_view"
             android:layout_width="20dp"
-            android:layout_height="20dp"/>
-    </LinearLayout>
-</FrameLayout>
+            android:layout_height="@dimen/audio_wav_height"
+            android:layout_gravity="top"
+            android:layout_marginLeft="@dimen/audio_wav_margin"
+            android:background="#5242FFFA"></View>
+        <ImageView
+            android:id="@+id/audio_slideview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/audio_slide_ic"/>
+    </FrameLayout>
+    <TextView
+        android:layout_marginTop="1.5dp"
+        android:textSize="11sp"
+        android:id="@+id/wav_last_point_tv"
+        android:layout_below="@id/audio_wav_ly"
+        android:textColor="@color/audio_wav_tip"
+        android:text="@string/audio_wav_last_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

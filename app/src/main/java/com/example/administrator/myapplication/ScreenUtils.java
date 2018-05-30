@@ -101,15 +101,15 @@ public class ScreenUtils {
         }
     }
 
-    public static int dpToPx(int dp) {
-        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    public static float dpToPx(int dp) {
+        return  (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public static int pxToDp(int px) {
-        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    public static float pxToDp(int px) {
+        return  (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public static int pxToSp(float pxValue) {
+    public static float pxToSp(float pxValue) {
         final float fontScale = Resources.getSystem().getDisplayMetrics().scaledDensity;
         return (int) (pxValue / fontScale + 0.5f);
     }

@@ -1,10 +1,13 @@
 package com.example.administrator.AudioRhythm;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.constraint.ConstraintLayout;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,23 +15,30 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.administrator.myapplication.R;
+import com.example.administrator.myapplication.ScreenUtils;
 
 import java.util.Random;
 
-public class AudioRhythmView extends ConstraintLayout{
-    private static final double PRE_PERCENT = 0.15;
+
+public class AudioRhythmView extends RelativeLayout  implements LifecycleObserver{
+    private static final double PRE_TIME = 3000;
+    private static final double SIDE_OFFSET = 100;
     private AudioWavView mAudioWavView;
-    private FrameLayout mRootLy;
-    private LinearLayout mSlideView;
-    private TextView mSlideTimeTv;
+    private RelativeLayout mRootLy;
+    private ImageView mSlideImgView;
+    private TextView mTimeTv;
     private FrameLayout.LayoutParams mSlideLyParams;
+    private TextView mLastPointTv;
     private double mPlayedPercent = 0;
     private double mUnplayedPercent = 1;
     private double mUnavailabePercent = 0;
+    private Lifecycle mLifecycle;
+//    private MusicManager mMusicManager;
 
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -38,23 +48,36 @@ public class AudioRhythmView extends ConstraintLayout{
                 return;
             }
             mPlayedPercent += 50.0 / getDuration();
+//            mPlayedPercent = mMusicManager.getCurrentMs() * 1.0 / getDuration();
             if(mIsSliding) {
                 if (mPlayedPercent > 1) {
                     mPlayedPercent = 1;
-                    stopMusic();
+                    replayMusic();
                 }
             }else {
                 if (mPlayedPercent > mUnplayedPercent) {
                     mPlayedPercent = mUnplayedPercent;
-                    stopMusic();
+                    replayMusic();
                 }
             }
             mHandler.postDelayed(this, 50);
             updateAudioWav();
         }
     };
+    private int mUnavailableTime;
+
+    private void replayMusic() {
+        calPrePosPlayedPercent();
+        playMusic();
+    }
 
     private boolean checkMusicManagerValid() {
+//        if(mMusicManager == null){
+//            return false;
+//        }
+//        if(!mMusicManager.isInPlay()){
+//            return false;
+//        }
         return true;//TODO
     }
 
@@ -86,11 +109,12 @@ public class AudioRhythmView extends ConstraintLayout{
         LayoutInflater.from(context).inflate(R.layout.audio_rhythm_ly, this, true);
 
         mRootLy = findViewById(R.id.audio_rhythm_ly);
-        mSlideView = findViewById(R.id.audio_slideview);
+        mSlideImgView = findViewById(R.id.audio_slideview);
         mAudioWavView = findViewById(R.id.audio_view);
-        mSlideTimeTv = findViewById(R.id.audio_time_tv);
+        mTimeTv = findViewById(R.id.audio_time_tv);
         mUnavailableMaskView = findViewById(R.id.unavailabe_mask_view);
-
+        mAudioWavView.setMaxWavHeight(ScreenUtils.dpToPx(82));
+        mLastPointTv = findViewById(R.id.wav_last_point_tv);
         mRootLy.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -99,43 +123,51 @@ public class AudioRhythmView extends ConstraintLayout{
                 }else{
                     mRootLy.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
-
-                mAudioWavView.setWavsData(getTestWavData());
+                mAudioWavView.setWavsData(getWavData());
                 updateAudioWav();
-                updateUnavailableTime(0);
+                setSlideViewMarginLeft((int) (calMaxSlideLeft() + 0.5));
+                updateUnavailableTime(0, true);
             }
         });
     }
 
+
+    public void setLifecycle(Lifecycle lifecycle) {
+        mLifecycle = lifecycle;
+        if(lifecycle != null){
+            mLifecycle.addObserver(this);
+        }
+    }
+
     private void updateUnavailabeMaskView() {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mUnavailableMaskView.getLayoutParams();
-        params.width = (int) (mUnavailabePercent * mAudioWavView.getWidth());
+        params.width = (int) (mUnavailabePercent * mAudioWavView.getWidth() + 0.5);
         mUnavailableMaskView.setLayoutParams(params);
     }
 
-    public void updateUnavailableTime(int time){
+    public void updateUnavailableTime(int time, boolean needPlay){
         mUnavailabePercent = time / getDuration();
         mPlayedPercent = mUnavailabePercent;
-        double mMaxSlideLeft =  mAudioWavView.getX() + mAudioWavView.getWidth() - mSlideView.getWidth() / 2.0;
-        setSlideViewMarginLeft((int) (mMaxSlideLeft + 0.5));
         updateUnavailabeMaskView();
-        playMusic();
+        if(needPlay) {
+            playMusic();
+        }
     }
 
     private void onStartPlayMusic() {
         removeUpdateCallback();
-        //seek to
         mHandler.postDelayed(mRunnable, 50);
     }
 
     private void playMusic(){
-        //seek to playedpercent
+//        mMusicManager.seekTo((int) (mPlayedPercent * getDuration()));
+//        mMusicManager.play();
         onStartPlayMusic();
     }
 
     private void stopMusic() {
-        //TODO
         removeUpdateCallback();
+//        mMusicManager.pause();
     }
 
     private void removeUpdateCallback(){
@@ -143,7 +175,37 @@ public class AudioRhythmView extends ConstraintLayout{
     }
 
     private double getDuration(){
-        return 15000;//TODO
+//        if(mMusicManager != null && mMusicManager.getMediaPlayer() != null){
+//            return mMusicManager.getMediaPlayer().getDuration();
+//        }
+        return 15000;
+    }
+
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        onDestroy();
+        Log.i("audio---5", "onDetachedFromWindow=" + getCurrSelectedPos());
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        Log.i("audio---5", "onAttachWindow=" + getCurrSelectedPos());
+    }
+
+    private void onDestroy(){
+//        if(mMusicManager != null){
+//            mMusicManager.destroy();
+//            mMusicManager = null;
+//        }
     }
 
     @Override
@@ -165,27 +227,28 @@ public class AudioRhythmView extends ConstraintLayout{
     private void onTouchEnd(MotionEvent event) {
         int x = setSlideViewX(event.getX());
         mUnplayedPercent = calUnplayPercent(x);
-        calTouchEndPlayedPercent();
+        calPrePosPlayedPercent();
         updateAudioWav();
         mIsSliding = false;
         playMusic();
+        Log.i("audio---3", "touchend--mUnplayedPercent=" + mUnplayedPercent);
     }
 
-    private void calTouchEndPlayedPercent() {
-        mPlayedPercent = mUnplayedPercent - PRE_PERCENT;
+    //计算刻度前置三秒的位置：这里pre_percent是临时设置
+    private void calPrePosPlayedPercent() {
+        mPlayedPercent = mUnplayedPercent - PRE_TIME / getDuration();
         if(mPlayedPercent < mUnavailabePercent){
             mPlayedPercent = mUnavailabePercent;
         }
     }
 
-
     private double calUnplayPercent(int x) {
-        double len =  x - mAudioWavView.getX() + mSlideView.getWidth() / 2;
+        double len =  x - mAudioWavView.getX() + mSlideImgView.getWidth() / 2;
         return len * 1.0 / mAudioWavView.getWidth();
     }
 
     private void updateAudioWav() {
-        mAudioWavView.update(mPlayedPercent, mUnplayedPercent);
+        mAudioWavView.update(mUnavailabePercent, mPlayedPercent, mUnplayedPercent);
     }
 
     private void onTouchStart(MotionEvent event) {
@@ -194,9 +257,9 @@ public class AudioRhythmView extends ConstraintLayout{
     }
 
     private int setSlideViewX(double x) {
-        x = x - mSlideView.getWidth() / 2.0;
-        double mMinSlideLeft = mAudioWavView.getX() - mSlideView.getWidth() / 2.0 + mUnavailabePercent * mAudioWavView.getWidth();
-        double mMaxSlideLeft =  mAudioWavView.getX() + mAudioWavView.getWidth() - mSlideView.getWidth() / 2.0;
+        x = x - mSlideImgView.getWidth() / 2.0;
+        double mMinSlideLeft = calMinSlideLeft();
+        double mMaxSlideLeft =  calMaxSlideLeft();
         if(x < mMinSlideLeft){
             x = mMinSlideLeft;
         }else if(x > mMaxSlideLeft){
@@ -208,23 +271,56 @@ public class AudioRhythmView extends ConstraintLayout{
         return (int) x;
     }
 
+    private double calMinSlideLeft() {
+        return mAudioWavView.getX() - mSlideImgView.getWidth() / 2.0 + mUnavailabePercent * mAudioWavView.getWidth() + calSideOffset();
+    }
+
+    private double calMaxSlideLeft(){
+        return  mAudioWavView.getX() + mAudioWavView.getWidth() - mSlideImgView.getWidth() / 2.0 - calSideOffset();
+    }
+
+    //产品要求端点出有0.1s偏移
+    private double calSideOffset(){
+        return SIDE_OFFSET / getDuration() * mAudioWavView.getWidth();
+    }
     private void setSlideViewMarginLeft(int x) {
         if(mSlideLyParams == null){
-            mSlideLyParams = (FrameLayout.LayoutParams) mSlideView.getLayoutParams();
+            mSlideLyParams = (FrameLayout.LayoutParams) mSlideImgView.getLayoutParams();
         }
         mSlideLyParams.leftMargin = x;
-        mSlideView.setLayoutParams(mSlideLyParams);
+        mSlideImgView.setLayoutParams(mSlideLyParams);
 
         double unplay = calUnplayPercent(x);
-        int time = (int) (unplay * getDuration() / 1000);
-        mSlideTimeTv.setText(time  + "s");
-        Log.i("audio----3", "x=" + x + " wavW=" + mAudioWavView.getWidth() + " wavX=" + mAudioWavView.getX() + " slideW/2=" + (mSlideView.getWidth() / 2));
+        Log.i("audio---3", "unplay=" + unplay);
+        setTimeText(unplay);
+        adjustTvPos(mTimeTv, x);
+        adjustTvPos(mLastPointTv, x);
 
+    }
+
+    private void setTimeText(double currPos) {
+        double time = currPos * getDuration() / 100 + 0.5;
+        mTimeTv.setText(((int)time) / 10.0  + "s");
+    }
+
+    private void adjustTvPos(View view, int slideViewX) {
+        RelativeLayout.LayoutParams params = (LayoutParams) view.getLayoutParams();
+        int width = view.getWidth();
+        int left = (int) (slideViewX + mSlideImgView.getWidth() / 2  - view.getWidth() / 2 + 0.5);
+        if(left + view.getWidth() > mAudioWavView.getRight()){
+            left = mAudioWavView.getRight() - view.getWidth();
+        }
+        if(left < mAudioWavView.getX()){
+            left = (int) mAudioWavView.getX();
+        }
+        params.leftMargin = left;
+        view.setLayoutParams(params);
     }
 
     private void onTouchMove(MotionEvent event) {
         touchStartOrMove(event);
     }
+
 
     private void touchStartOrMove(MotionEvent event) {
         int x = setSlideViewX(event.getX());
@@ -232,17 +328,87 @@ public class AudioRhythmView extends ConstraintLayout{
         updateAudioWav();
     }
 
-    private int[] getTestWavData() {
-        int num = mAudioWavView.getWidth();
-        int data[] = new int[num];
+    private int[] getWavData() {
+        int num = (int) (mAudioWavView.getWidth() / ScreenUtils.dpToPx(2));
+        int data[] = new int[ num];
         Random random = new Random();
+        float maxHeight = ScreenUtils.dpToPx(82) + 1;
         for(int i = 0; i < num; i++) {
-            data[i] = random.nextInt(240);
+            data[i] = random.nextInt((int) maxHeight);
+            if(data[i] < 15){
+                data[i] = 15;
+            }
         }
+        Log.i("audio----8", "screenw=" + ScreenUtils.getScreenWithSize(getContext()).mWidth +" width=" + mAudioWavView.getWidth() + " num=" + num + " screenPix:" + ScreenUtils.dpToPx(2) + " slideW=" + mSlideImgView.getWidth());
         return data;
     }
 
-    public void setMusicPath(String path) {
-        mAudioWavView.setWavsData(getTestWavData());
+    public void setMusicPath(final String path, final int time) {
+//        mAudioWavView.setWavsData(getWavData());
+//        if(mMusicManager == null){
+//            mMusicManager = new MusicManager(getContext());
+//        }
+//        mMusicManager.setOnMusicStatChangeListener(this);
+//        mUnavailableTime = time;
+//        mMusicManager.setPreparedListener(new MediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(MediaPlayer mp) {
+//                ThreadUtils.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        updateUnavailableTime(time, true);
+//                    }
+//                });
+//                Log.i("audio----", "onPrepared------");
+//            }
+//        });
+//        mMusicManager.play(path, false);
+        Log.i("audio---2", "set musicPath------" + path);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onViewResume(){
+        playMusic();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void onViewPause(){
+        stopMusic();
+    }
+
+    //返回选择的刻度值
+    public int getCurrSelectedPos(){
+        return (int) (mUnplayedPercent * getDuration());
+    }
+
+    public void onStart() {
+//        ThreadUtils.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                updateUnavailableTime(mUnavailableTime, true);
+//            }
+//        });
+
+        onStartPlayMusic();
+        Log.i("audio---2", "onpstart------");
+    }
+
+    public void onPause() {
+        Log.i("audio---2", "onpause------");
+    }
+
+    public void onResume() {
+        onStartPlayMusic();
+        Log.i("audio---2", "onResume------");
+    }
+
+    public void onComplete() {
+        Log.i("audio---2", "onComplete------");
+        replayMusic();
+    }
+
+    public void onError() {
+        removeUpdateCallback();
+        Log.i("audio---2", "onError------");
     }
 }

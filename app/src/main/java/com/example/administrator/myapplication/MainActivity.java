@@ -2,6 +2,9 @@ package com.example.administrator.myapplication;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -103,6 +106,26 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, RoomActivity.class);
             startActivity(intent);
         });
+
+        testDrawLine();
+    }
+    double progress = 0;
+    private void testDrawLine() {
+
+        DrawCornerLine line = findViewById(R.id.cust_progress_bar);
+        Handler handler = new Handler(Looper.getMainLooper());
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                progress += 0.0025;
+                if(progress > 1){
+                    progress = 0;
+                }
+                line.update(progress);
+                handler.postDelayed(this, 25);
+            }
+        };
+        handler.postDelayed(runnable, 2000);
     }
 
     private void testAnnotation() {

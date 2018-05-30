@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--音轨相关-->
+    <dimen name="audio_wav_margin">10dp</dimen>
+    <dimen name="audio_wav_height">90dp</dimen>
+</resources>

@@ -40,4 +40,18 @@
         android:text="测试音轨"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <com.example.administrator.myapplication.DrawCornerLine
+        android:layout_marginTop="2dp"
+        android:layout_width="wrap_content"
+        android:id="@+id/cust_progress_bar"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="20dp"
+        android:text="test_rtl_ltr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

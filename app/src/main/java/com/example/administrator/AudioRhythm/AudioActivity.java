@@ -21,17 +21,12 @@ public class AudioActivity extends AppCompatActivity {
         mAudioView = findViewById(R.id.audio_rhythm_view);
 
         findViewById(R.id.show_wavs).setOnClickListener(v -> {
-            mAudioView.setMusicPath("");
+            mAudioView.setMusicPath("", 0);
         });
 
         findViewById(R.id.change_unavailable).setOnClickListener(v -> {
-            mAudioView.updateUnavailableTime(new Random().nextInt(8) * 1000);
+            mAudioView.updateUnavailableTime(new Random().nextInt(8) * 1000, true);
         });
 
     }
-
-
-
-
-
 }

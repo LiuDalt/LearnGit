@@ -15,18 +15,20 @@ import com.example.administrator.myapplication.ScreenUtils;
 public class AudioWavView extends View {
 
     private int[] mWavsData;
-    private int mUnitWidth = 1;
-    private int mSpace = 0;
+    private float mUnitWidth = ScreenUtils.dpToPx(1);
+    private float mSpace = ScreenUtils.dpToPx(1);
     private Paint mPaint;
-    private int mBgWavColor = Color.parseColor("#696969");
-    private int mBgColor = Color.parseColor("#D3D3D3");
-    private int mPlayedWavColor = Color.parseColor("#7FFFAA");
-    private int mUnplayWavColor = Color.parseColor("#FFD700");
+    private int mBgWavColor = Color.parseColor("#80000000");
+    private int mBgColor = Color.parseColor("#33ffffff");
+    private int mPlayedWavColor = Color.parseColor("#FFEE36");
+    private int mUnplayWavColor = Color.parseColor("#66FFEE36");
+    private int mUnavailabeWavColor = Color.parseColor("#1FCECE");
     private int mDefaultWidth;
     private int mDefaultHeight;
-    private int mMaxWavHeight;
+    private float mMaxWavHeight;
     private int mPlayedIndex = 80;
     private int mUnplayIndex = 160;
+    private int mUnavailableIndex = 0;
 
     public AudioWavView(Context context) {
         super(context);
@@ -48,7 +50,7 @@ public class AudioWavView extends View {
 
     private void init() {
         mDefaultWidth = ScreenUtils.getScreenWithSize(getContext()).mWidth * 9 / 10;
-        mDefaultHeight = ScreenUtils.dpToPx(100);
+        mDefaultHeight = (int) ScreenUtils.dpToPx(100);
         mMaxWavHeight = (int) (mDefaultHeight * 0.8);
 
         mPaint = new Paint();
@@ -56,6 +58,10 @@ public class AudioWavView extends View {
         mPaint.setDither(true);
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setColor(mBgWavColor);
+    }
+
+    public void setMaxWavHeight(float maxWavHeight) {
+        mMaxWavHeight = maxWavHeight;
     }
 
     @Override
@@ -73,6 +79,10 @@ public class AudioWavView extends View {
             return;
         }
         int i = 0;
+        mPaint.setColor(mUnavailabeWavColor);
+        for(; i < mUnavailableIndex; i++){
+            drawUnit(canvas, i);
+        }
         if(mUnplayIndex > mPlayedIndex){
             mPaint.setColor(mPlayedWavColor);
             for(; i < mPlayedIndex; i++){
@@ -96,37 +106,25 @@ public class AudioWavView extends View {
     }
 
     private void drawUnit(Canvas canvas, int i) {
-        int dstH;
-        int centY = getHeight() / 2;
+        float dstH;
+        float centY = getHeight() / 2;
         dstH = mWavsData[i];
         if(dstH > mMaxWavHeight){
             dstH = mMaxWavHeight;
         }
-        int dy = centY - dstH / 2;
-        canvas.drawRect(i, dy, i + mUnitWidth, dy + dstH, mPaint);
+        float dy = centY - dstH / 2;
+        float left = i * (mSpace + mUnitWidth);
+        canvas.drawRect(left, dy, left + mUnitWidth, dy + dstH, mPaint);
     }
 
-    private void setPaintColor(int index) {
-        if(mPlayedIndex < mUnplayIndex) {
-            if (index == mPlayedIndex) {
-                mPaint.setColor(mUnplayWavColor);
-            }
-            if (index == mUnplayIndex) {
-                mPaint.setColor(mBgWavColor);
-            }
-        }else{
-            if(index == mPlayedIndex){
-                mPaint.setColor(mBgWavColor);
-            }
-        }
-    }
 
     /**
      * unplayIndex must be larger than playedIndex
      */
-    public void update(double playedPercent, double unplayPercent){
+    public void update(double unavailabePercent, double playedPercent, double unplayPercent){
         int playedIndex = (int) (playedPercent * mWavsData.length + 0.5);
         int unplayIndex = (int)(unplayPercent * mWavsData.length +0.5);
+        int unavailabeIndex = (int) (unavailabePercent * mWavsData.length + 0.5);
         if(playedIndex < 0){
             playedIndex = 0;
         }
@@ -139,8 +137,15 @@ public class AudioWavView extends View {
         if(unplayIndex >= mWavsData.length){
             unplayIndex = mWavsData.length - 1;
         }
+        if(unavailabeIndex < 0){
+            unavailabeIndex = 0;
+        }
+        if(unavailabeIndex >= mWavsData.length){
+            unavailabeIndex = mWavsData.length - 1;
+        }
         mPlayedIndex = playedIndex;
         mUnplayIndex = unplayIndex;
+        mUnavailableIndex = unavailabeIndex;
         invalidate();
     }
 
