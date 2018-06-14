@@ -1,11 +1,9 @@
 package com.example.administrator.myapplication;
 
 import android.databinding.DataBindingUtil;
-import android.databinding.ViewDataBinding;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -17,14 +15,14 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private LinearLayout mRootLy;
+    private LinearLayout mLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRootLy = findViewById(R.id.rootly);
+        mLayout = findViewById(R.id.rootly);
         dataBinding();
 
         test();
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void dataBinding() {
-        ItemLayoutBinding binding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_layout, mRootLy, true);
+        ItemLayoutBinding binding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.item_layout, mLayout, true);
         binding.tv2.setText("branch1");
         binding.tv1.setText("master33333");
     }
