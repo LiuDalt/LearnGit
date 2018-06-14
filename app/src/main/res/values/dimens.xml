@@ -3,4 +3,9 @@
     <!--音轨相关-->
     <dimen name="audio_wav_margin">10dp</dimen>
     <dimen name="audio_wav_height">90dp</dimen>
+    <dimen name="body_slim_bar_dot_dimen">9dp</dimen>
+    <dimen name="body_slim_bar_line">14dp</dimen>
+    <dimen name="body_slim_tv_size">13sp</dimen>
+    <dimen name="body_slim_tv_top">7dp</dimen>
+    <dimen name="slim_ic_margin">10dp</dimen>
 </resources>

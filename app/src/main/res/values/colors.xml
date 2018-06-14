@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="audio_wav_tip">#80ffffff</color>
+    <color name="body_slim_bar_dot_bg">#ffffff</color>
+    <color name="body_slim_bar_line_bg">#ff0000</color>
 </resources>

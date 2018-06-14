@@ -22,6 +22,8 @@
         </activity>
         <activity android:name="com.example.administrator.AudioRhythm.AudioActivity">
         </activity>
+        <activity android:name="com.example.administrator.body.TestBodyActivity">
+        </activity>
     </application>
 
 </manifest>

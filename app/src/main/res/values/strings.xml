@@ -4,4 +4,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="audio_wav_last_point">Last end point</string>
+    <string name="thinnest_body">Thinnest</string>
+    <string name="fattest_body">Fattest</string>
+    <string name="original_body">Original</string>
+
+    <string name="overall_tab">Overall</string>
+    <string name="head_tab">Head</string>
+    <string name="shoulder_tab">Shoulder</string>
+    <string name="waist_tab">Waist</string>
+    <string name="hip_tab">Hip</string>
+    <string name="leg_tab">Leg</string>
 </resources>

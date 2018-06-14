@@ -16,4 +16,13 @@
         <!--<item name="maxHeight">20dip</item>-->
         <!--<item name="mirrorForRtl">true</item>-->
     </style>
+
+    <style name="BodySlimTvStyle">
+        <item name="android:shadowColor">#4d000000</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowRadius">3</item>
+        <item name="android:textColor">#B3ffffff</item>
+        <item name="android:textSize">13sp</item>
+    </style>
 </resources>

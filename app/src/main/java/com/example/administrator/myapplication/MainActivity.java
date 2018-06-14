@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 
 import com.example.administrator.AudioRhythm.AudioActivity;
 import com.example.administrator.aac.TestAACActivity;
+import com.example.administrator.body.TestBodyActivity;
 import com.example.administrator.mannotation.IdInject;
 import com.example.administrator.mannotation.IdInjectHelper;
 import com.example.administrator.myapplication.databinding.ItemLayoutBinding;
@@ -108,7 +109,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         testDrawLine();
+
+        testBodySlim();
     }
+
+    private void testBodySlim() {
+        findViewById(R.id.test_body_slim).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TestBodyActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
     double progress = 0;
     private void testDrawLine() {
 
