@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/root_ly"
+    tools:context="com.example.administrator.aac.TestAACActivity">
+    <Button
+        android:id="@+id/change_value"
+        android:text="增加5"
+        android:textAllCaps="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+
+    <fragment
+        android:id="@+id/fragment1"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/change_value"
+        android:name="com.example.administrator.aac.AACFragment1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="100dp"></fragment>
+
+    <SeekBar
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:min="0"
+        android:max="100"
+        android:id="@+id/value_bar"
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_marginTop="20dp"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintTop_toBottomOf="@id/value_bar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/value_tv"
+        android:text="当前值是："
+        android:id="@+id/text_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <com.example.administrator.aac.MyTextView
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:id="@+id/value_tv"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_tip"
+        app:layout_constraintLeft_toRightOf="@id/text_tip"
+        android:text="0 元"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:background="@android:color/darker_gray"
+        android:text="点击查看当前Activity状态"
+        android:id="@+id/curr_status"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/add_remove_view"
+        android:text="增加/删除按钮"
+        app:layout_constraintBottom_toBottomOf="@id/curr_status"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</android.support.constraint.ConstraintLayout>

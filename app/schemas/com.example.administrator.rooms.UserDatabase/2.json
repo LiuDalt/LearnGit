@@ -1,0 +1,74 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "ba4684f1becd657a6542212d0f628020",
+    "entities": [
+      {
+        "tableName": "users_tb",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_name` TEXT, `user_age` INTEGER NOT NULL, `address1_city` TEXT, `address2_city` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "user_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "age",
+            "columnName": "user_age",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mAddress1.city",
+            "columnName": "address1_city",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mAddress2.city",
+            "columnName": "address2_city",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_users_tb_user_age",
+            "unique": false,
+            "columnNames": [
+              "user_age"
+            ],
+            "createSql": "CREATE  INDEX `index_users_tb_user_age` ON `${TABLE_NAME}` (`user_age`)"
+          },
+          {
+            "name": "index_users_tb_user_name",
+            "unique": false,
+            "columnNames": [
+              "user_name"
+            ],
+            "createSql": "CREATE  INDEX `index_users_tb_user_name` ON `${TABLE_NAME}` (`user_name`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ba4684f1becd657a6542212d0f628020\")"
+    ]
+  }
+}
