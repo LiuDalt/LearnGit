@@ -2,9 +2,11 @@ package com.example.administrator.myapplication;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +20,11 @@ import com.example.administrator.mannotation.IdInject;
 import com.example.administrator.mannotation.IdInjectHelper;
 import com.example.administrator.myapplication.databinding.ItemLayoutBinding;
 import com.example.administrator.rooms.RoomActivity;
+import com.example.administrator.transfer.TransferHepler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
@@ -37,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
     @IdInject(R.id.room_btn)
     private Button mRoomBtn;
+
+    @IdInject(R.id.test_transfer)
+    private Button mTransfer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +114,52 @@ public class MainActivity extends AppCompatActivity {
 
         testDrawLine();
 
+        testTransfer();
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        testJSon();
+    }
+
+    private void testJSon() {
+        try {
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            JSONObject tmpObj = null;
+            for(int i = 0; i < 3; i++)
+            {
+                tmpObj = new JSONObject();
+                tmpObj.put("name" , "name" + i);
+                tmpObj.put("tete" , "tt" + i);
+                jsonArray.put(tmpObj);
+            }
+            String personInfos = jsonArray.toString(); // 将JSONArray转换得到String
+            jsonObject.put("personInfos" , personInfos);   // 获得JSONObject的String
+            Log.e("tagtag", jsonObject.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void testTransfer() {
+        mTransfer.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TransferHepler.test();
+                    }
+                }).start();
+
+            }
+        });
     }
 
 

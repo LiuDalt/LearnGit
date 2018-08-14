@@ -1,5 +1,8 @@
 package com.example.administrator.mannotation;
 
+import android.support.annotation.FloatRange;
+import android.support.annotation.IntRange;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -119,4 +122,24 @@ public class TestAnnotation {
         }
     }
 
+    private int mAge;
+    public void setAge(@IntRange(from = 0, to = 100) int age){
+        if(age < 0 || age > 100){
+            return;
+        }
+        mAge = age;
+    }
+    private double mPrice;
+    public void setPrice(@FloatRange(from = 10.0f, to = 100.0f) double price){
+        mPrice = price;
+    }
+
+    private void test(){
+        setAge(calAge());//编译通过
+    }
+
+
+    private int calAge() {
+        return -100;
+    }
 }

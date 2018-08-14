@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.administrator.myapplication"
-        minSdkVersion 15
+        minSdkVersion 18
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -30,6 +30,73 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+}
+Map map = [key1:123, key2:"abc"]
+task hello << {
+    println("hello")
+}
+
+task hi << {
+    println("hi")
+}
+
+hello.dependsOn hi
+
+task job1 {
+    doLast {
+        println("job1")
+    }
+}
+tasks.whenTaskAdded {ts ->
+    if(ts.name.equals("hello")){
+        println("hello execute")
+    }
+}
+
+gradle.taskGraph.addTaskExecutionListener(new TaskExecutionListener() {
+    @Override
+    void beforeExecute(Task task) {
+        if(task.name.equals("hello")){
+            println("before hello execute")
+        }
+    }
+
+    @Override
+    void afterExecute(Task task, TaskState state) {
+        if(task.name.equals("hi")){
+            println("after hi execute")
+        }
+        if(task.name.equals("hello")){
+            copy{
+                from("$rootDir" +"/app/build/outputs/apk/debug/app-debug.apk")
+                into("D:/a")
+            }
+        }
+    }
+})
+
+def getHello(def from){
+    Person person1 = new Person()
+    person1.setName("xiaoming")
+    person1.sayHi()
+
+    Person.hi()
+}
+
+ static def getHi(def from){
+    "hi $from"
+}
+
+
+ class Person{
+    String name
+    def sayHi(){
+        "hello $name"
+    }
+
+     static hi(){
+         "hihihi"
+     }
 }
 
 dependencies {
