@@ -15,6 +15,6 @@ public class TestArray {
                 iterator.remove();
             }
         }
-        System.out.println(list + "2323");
+        System.out.println(list);
     }
 }

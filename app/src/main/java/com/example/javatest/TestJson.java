@@ -20,7 +20,7 @@ public class TestJson {
             decoder = charset.newDecoder();
             // charBuffer = decoder.decode(buffer);//用这个的话，只能输出来一次结果，第二次显示为空
             charBuffer = decoder.decode(buffer.asReadOnlyBuffer());
-            System.out.println(charBuffer.toString() + " 111");
+            System.out.println(charBuffer.toString());
         }catch (Exception e){
 
         }
