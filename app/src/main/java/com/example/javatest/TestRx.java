@@ -12,6 +12,7 @@ import io.reactivex.schedulers.Schedulers;
 public class TestRx {
     public static void main(String args[]){
         String commit1 = "commit1";
+        String commit2 = "commit2";
         Observable.interval(100, TimeUnit.MICROSECONDS).take(3).subscribe(new Observer<Long>() {
             @Override
             public void onSubscribe(Disposable d) {
