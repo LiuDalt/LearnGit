@@ -159,7 +159,7 @@ public class DecodeEditEncodeTest extends AndroidTestCase {
      *
      * @return true on success, false on "soft" failure
      */
-    private boolean generateVideoFile(VideoChunks output) {
+    private boolean  generateVideoFile(VideoChunks output) {
         if (VERBOSE) Log.d(TAG, "generateVideoFile " + mWidth + "x" + mHeight);
         MediaCodec encoder = null;
         InputSurface inputSurface = null;
