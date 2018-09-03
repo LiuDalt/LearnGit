@@ -13,6 +13,7 @@ public class TestRx {
     public static void main(String args[]){
         String it = "aaaa";
         String bbb = "bbbbb";
+        int b = 2323;
         Observable.interval(100, TimeUnit.MICROSECONDS).take(3).subscribe(new Observer<Long>() {
             @Override
             public void onSubscribe(Disposable d) {
