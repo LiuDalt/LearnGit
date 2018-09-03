@@ -6,15 +6,69 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
     tools:context=".MainActivity">
-    <TextView
-        android:layout_marginTop="40dp"
-        android:textColor="@android:color/white"
-        android:text="hahahahahaha"
-        android:shadowColor="#cc000000"
-        android:shadowDy="1"
-        android:shadowRadius="3"
+
+    <Button
+        android:textAllCaps="false"
+        android:text="testRX"
+        android:id="@+id/btn1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:textAllCaps="false"
+        android:text="testAAC"
+        android:id="@+id/btn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+    android:textAllCaps="false"
+    android:id="@+id/annotation_btn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
+
+    <Button
+        android:textAllCaps="false"
+        android:text="测试Room"
+        android:id="@+id/room_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/test_audio"
+        android:text="测试音轨"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <com.example.administrator.myapplication.DrawCornerLine
+        android:layout_marginTop="2dp"
+        android:layout_width="wrap_content"
+        android:id="@+id/cust_progress_bar"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="20dp"
+        android:text="test_rtl_ltr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/test_body_slim"
+        android:text="瘦身"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/testtest"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"/>
+
+    <Button
+        android:id="@+id/test_transfer"
+        android:text="转换"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/body_slim_board_bg"
+    android:layout_height="181dp">
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/body_slim_board_tab"
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+    </android.support.v7.widget.RecyclerView>
+    <View
+        android:background="#1affffff"
+        android:id="@+id/body_slim_board_divider"
+        app:layout_constraintTop_toBottomOf="@id/body_slim_board_tab"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"></View>
+    <com.example.administrator.body.BodySlimmingSlideView
+        android:layout_marginBottom="48dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:id="@+id/body_slim_board_slide_view"
+        android:layout_marginTop="28dp"
+        app:layout_constraintTop_toBottomOf="@id/body_slim_board_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></com.example.administrator.body.BodySlimmingSlideView>
+</android.support.constraint.ConstraintLayout>

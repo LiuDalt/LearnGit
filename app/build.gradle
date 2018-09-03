@@ -4,11 +4,18 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.administrator.myapplication"
-        minSdkVersion 15
+        minSdkVersion 18
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        //指定room.schemaLocation生成的文件路径
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
@@ -19,16 +26,97 @@ android {
     dataBinding {
         enabled = true
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+Map map = [key1:123, key2:"abc"]
+task hello << {
+    println("hello")
+}
+
+task hi << {
+    println("hi")
+}
+
+hello.dependsOn hi
+
+task job1 {
+    doLast {
+        println("job1")
+    }
+}
+tasks.whenTaskAdded {ts ->
+    if(ts.name.equals("hello")){
+        println("hello execute")
+    }
+}
+
+gradle.taskGraph.addTaskExecutionListener(new TaskExecutionListener() {
+    @Override
+    void beforeExecute(Task task) {
+        if(task.name.equals("hello")){
+            println("before hello execute")
+        }
+    }
+
+    @Override
+    void afterExecute(Task task, TaskState state) {
+        if(task.name.equals("hi")){
+            println("after hi execute")
+        }
+        if(task.name.equals("hello")){
+            copy{
+                from("$rootDir" +"/app/build/outputs/apk/debug/app-debug.apk")
+                into("D:/a")
+            }
+        }
+    }
+})
+
+def getHello(def from){
+    Person person1 = new Person()
+    person1.setName("xiaoming")
+    person1.sayHi()
+
+    Person.hi()
+}
+
+ static def getHi(def from){
+    "hi $from"
+}
+
+
+ class Person{
+    String name
+    def sayHi(){
+        "hello $name"
+    }
+
+     static hi(){
+         "hihihi"
+     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:support-v4:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5'
-    implementation "io.reactivex.rxjava2:rxjava:2.1.12"
+    compile 'com.android.support:recyclerview-v7:27.1.1'
+    compile 'com.android.support:design:27.1.1'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.12'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.2'
+
+    compile 'android.arch.lifecycle:extensions:1.1.0'
+    compile 'android.arch.lifecycle:viewmodel:1.1.0'
+
+    // Room (use 1.1.0-rc1 for latest version)
+    implementation "android.arch.persistence.room:runtime:1.0.0"
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+
 }
