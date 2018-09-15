@@ -1,14 +1,19 @@
 package com.example.administrator.myapplication;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -25,6 +30,10 @@ import com.example.administrator.transfer.TransferHepler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
@@ -47,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
     @IdInject(R.id.test_transfer)
     private Button mTransfer;
+
+    @IdInject(R.id.test_get_number)
+    private Button mGetPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         testAAC();
 
         testAnnotation();
-        mRoomBtn.setOnClickListener(v->{
+        mRoomBtn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RoomActivity.class);
             startActivity(intent);
         });
@@ -116,7 +128,58 @@ public class MainActivity extends AppCompatActivity {
 
         testTransfer();
 
+        testGetNum();
 
+        testDragRecyclerView();
+
+    }
+
+    private void testDragRecyclerView() {
+        findViewById(R.id.test_drag_recyclerView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, RecyclerViewDragActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void testGetNum() {
+        findViewById(R.id.test_get_number).setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+            @Override
+            public void onClick(View v) {
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    Log.i("numble----", "no permission---");
+                    return;
+                }
+                String num = telephonyManager.getLine1Number();
+                Log.i("numble----", num +"");
+                Log.i("numble----", "pkg=" + (SubscriptionManager.class.getName()));
+                Class cls = null;
+                try {
+                    cls = Class.forName(SubscriptionManager.class.getName());
+                    Constructor  constructor = cls.getConstructor(Context.class);
+                    Method subscript = cls.getDeclaredMethod("getSubId",new Class[]{int.class});
+                    Class teltephony = telephonyManager.getClass();
+                    Method method = teltephony.getMethod("getLine1Number", new Class[]{int.class});
+                    int[] sub1 = (int[]) subscript.invoke(constructor.newInstance(MainActivity.this),0);
+                    if(sub1 != null) {
+                        Log.i("numble----", "sub1 num=" + sub1[0] +  " " + method.invoke(telephonyManager, sub1[0]));
+                    }
+                    int[] sub2 = (int[]) subscript.invoke(constructor.newInstance(MainActivity.this),1);
+                    if(sub2 != null){
+                        Log.i("numble----", "sub2 num=" + sub2[0] + "  " + method.invoke(telephonyManager, sub2[0]));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     @Override

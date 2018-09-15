@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.administrator.myapplication"
-        minSdkVersion 18
+        minSdkVersion 14
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -31,7 +31,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-Map map = [key1:123, key2:"abc"]
+Map map = [key1: 123, key2: "abc"]
 task hello << {
     println("hello")
 }
@@ -47,8 +47,8 @@ task job1 {
         println("job1")
     }
 }
-tasks.whenTaskAdded {ts ->
-    if(ts.name.equals("hello")){
+tasks.whenTaskAdded { ts ->
+    if (ts.name.equals("hello")) {
         println("hello execute")
     }
 }
@@ -56,26 +56,26 @@ tasks.whenTaskAdded {ts ->
 gradle.taskGraph.addTaskExecutionListener(new TaskExecutionListener() {
     @Override
     void beforeExecute(Task task) {
-        if(task.name.equals("hello")){
+        if (task.name.equals("hello")) {
             println("before hello execute")
         }
     }
 
     @Override
     void afterExecute(Task task, TaskState state) {
-        if(task.name.equals("hi")){
+        if (task.name.equals("hi")) {
             println("after hi execute")
         }
-        if(task.name.equals("hello")){
-            copy{
-                from("$rootDir" +"/app/build/outputs/apk/debug/app-debug.apk")
+        if (task.name.equals("hello")) {
+            copy {
+                from("$rootDir" + "/app/build/outputs/apk/debug/app-debug.apk")
                 into("D:/a")
             }
         }
     }
 })
 
-def getHello(def from){
+def getHello(def from) {
     Person person1 = new Person()
     person1.setName("xiaoming")
     person1.sayHi()
@@ -83,20 +83,21 @@ def getHello(def from){
     Person.hi()
 }
 
- static def getHi(def from){
+static def getHi(def from) {
     "hi $from"
 }
 
 
- class Person{
+class Person {
     String name
-    def sayHi(){
+
+    def sayHi() {
         "hello $name"
     }
 
-     static hi(){
-         "hihihi"
-     }
+    static hi() {
+        "hihihi"
+    }
 }
 
 dependencies {
