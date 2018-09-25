@@ -7,13 +7,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
         android:textAllCaps="false"
         android:text="testRX"
         android:id="@+id/btn1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/test_record_video"
+            android:text="录制"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
     <Button
         android:textAllCaps="false"
@@ -87,6 +96,12 @@
             android:text="测试拖拽RecyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <Button
+            android:text="视频转码"
+            android:id="@+id/test_convert_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 </LinearLayout>

@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.administrator.aac.TestAACActivity;
 import com.example.administrator.mannotation.IdInject;
@@ -26,6 +28,8 @@ import com.example.administrator.mannotation.IdInjectHelper;
 import com.example.administrator.myapplication.databinding.ItemLayoutBinding;
 import com.example.administrator.rooms.RoomActivity;
 import com.example.administrator.transfer.TransferHepler;
+import com.example.learnmedia.CameraToMpegTest;
+import com.example.learnmedia.convert.ExtractDecodeEditEncodeMuxTest2;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +38,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
@@ -132,6 +137,45 @@ public class MainActivity extends AppCompatActivity {
 
         testDragRecyclerView();
 
+        testVideoConvert();
+
+        testVideoRecord();
+    }
+
+    private void testVideoRecord() {
+        findViewById(R.id.test_record_video).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            new CameraToMpegTest().testEncodeCameraToMp4();
+                        } catch (Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        });
+    }
+
+    private void testVideoConvert() {
+        findViewById(R.id.test_convert_video).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            new ExtractDecodeEditEncodeMuxTest2().testExtractDecodeEditEncodeMuxAudioVideo();
+                        } catch (Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        });
     }
 
     private void testDragRecyclerView() {
@@ -144,40 +188,39 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    String TAG = "testGetNum";
     private void testGetNum() {
         findViewById(R.id.test_get_number).setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
             @Override
             public void onClick(View v) {
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    Log.i("numble----", "no permission---");
+                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "no permission---");
                     return;
                 }
-                String num = telephonyManager.getLine1Number();
-                Log.i("numble----", num +"");
-                Log.i("numble----", "pkg=" + (SubscriptionManager.class.getName()));
-                Class cls = null;
+                String num = telephonyManager.getLine1Number();//获取当前正在使用的手机号码
+                Toast.makeText(MainActivity.this, num, Toast.LENGTH_LONG).show();
+                Log.i(TAG, "num=" + num);
                 try {
-                    cls = Class.forName(SubscriptionManager.class.getName());
-                    Constructor  constructor = cls.getConstructor(Context.class);
-                    Method subscript = cls.getDeclaredMethod("getSubId",new Class[]{int.class});
-                    Class teltephony = telephonyManager.getClass();
-                    Method method = teltephony.getMethod("getLine1Number", new Class[]{int.class});
-                    int[] sub1 = (int[]) subscript.invoke(constructor.newInstance(MainActivity.this),0);
-                    if(sub1 != null) {
-                        Log.i("numble----", "sub1 num=" + sub1[0] +  " " + method.invoke(telephonyManager, sub1[0]));
+                    SubscriptionManager subscriptionManager = SubscriptionManager.from(MainActivity.this);
+                    Method getSubIdMethod = subscriptionManager.getClass().getDeclaredMethod("getSubId",new Class[]{int.class});
+                    Class telephonyManagerClass = telephonyManager.getClass();
+                    Method method = telephonyManagerClass.getMethod("getLine1Number", new Class[]{int.class});
+                    int[] sub1 = (int[]) getSubIdMethod.invoke(subscriptionManager,0);
+                    if(sub1 != null) {//getLine1Number获取卡槽1的手机号码
+                        Log.i(TAG, "sub1 num=" + sub1[0] +  " " + method.invoke(telephonyManager, sub1[0]));
                     }
-                    int[] sub2 = (int[]) subscript.invoke(constructor.newInstance(MainActivity.this),1);
-                    if(sub2 != null){
-                        Log.i("numble----", "sub2 num=" + sub2[0] + "  " + method.invoke(telephonyManager, sub2[0]));
+                    int[] sub2 = (int[]) getSubIdMethod.invoke(subscriptionManager,1);
+                    if(sub2 != null){//getLine1Number获取卡槽2的号码
+                        Log.i(TAG, "sub2 num=" + sub2[0] + "  " + method.invoke(telephonyManager, sub2[0]));
                     }
+                    //获取当前激活的手机sim卡信息
+                    List<SubscriptionInfo> infoList = subscriptionManager.getActiveSubscriptionInfoList();
+                    Log.i(TAG, "active infolist=" + infoList.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
         });
     }

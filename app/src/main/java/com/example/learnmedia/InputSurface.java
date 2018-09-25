@@ -29,7 +29,7 @@ import android.view.Surface;
  * to create an EGL window surface.  Calls to eglSwapBuffers() cause a frame of data to be sent
  * to the video encoder.
  */
-class InputSurface {
+public class InputSurface {
     private static final String TAG = "InputSurface";
     private static final boolean VERBOSE = false;
     private static final int EGL_RECORDABLE_ANDROID = 0x3142;
@@ -112,8 +112,8 @@ class InputSurface {
         EGL14.eglDestroySurface(mEGLDisplay, mEGLSurface);
         EGL14.eglDestroyContext(mEGLDisplay, mEGLContext);
         //EGL14.eglTerminate(mEGLDisplay);
-        mSurface.release();
         // null everything out so future attempts to use this object will cause an NPE
+        mSurface.release();
         mEGLDisplay = null;
         mEGLContext = null;
         mEGLSurface = null;
