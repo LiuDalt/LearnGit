@@ -23,6 +23,7 @@ import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
+import android.os.Bundle;
 import android.os.Environment;
 import android.test.AndroidTestCase;
 import android.util.Log;
@@ -256,6 +257,7 @@ public class ExtractDecodeEditEncodeMuxTest2 extends AndroidTestCase {
                         MediaFormat.KEY_COLOR_FORMAT, OUTPUT_VIDEO_COLOR_FORMAT);
                 outputVideoFormat.setInteger(MediaFormat.KEY_BIT_RATE, OUTPUT_VIDEO_BIT_RATE);
                 outputVideoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, OUTPUT_VIDEO_FRAME_RATE);
+                outputVideoFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 0);
                 outputVideoFormat.setInteger(
                         MediaFormat.KEY_I_FRAME_INTERVAL, OUTPUT_VIDEO_IFRAME_INTERVAL);
                 if (VERBOSE) Log.d(TAG, "video format: " + outputVideoFormat);
@@ -277,9 +279,7 @@ public class ExtractDecodeEditEncodeMuxTest2 extends AndroidTestCase {
                 assertTrue("missing audio track in test video", audioInputTrack != -1);
                 MediaFormat inputFormat = audioExtractor.getTrackFormat(audioInputTrack);
                 MediaFormat outputAudioFormat =
-                        MediaFormat.createAudioFormat(
-                                OUTPUT_AUDIO_MIME_TYPE, OUTPUT_AUDIO_SAMPLE_RATE_HZ,
-                                OUTPUT_AUDIO_CHANNEL_COUNT);
+                        MediaFormat.createAudioFormat(OUTPUT_AUDIO_MIME_TYPE, OUTPUT_AUDIO_SAMPLE_RATE_HZ, OUTPUT_AUDIO_CHANNEL_COUNT);
                 outputAudioFormat.setInteger(MediaFormat.KEY_BIT_RATE, OUTPUT_AUDIO_BIT_RATE);
                 outputAudioFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, OUTPUT_AUDIO_AAC_PROFILE);
                 // Create a MediaCodec for the desired codec, then configure it as an encoder with
@@ -407,6 +407,17 @@ public class ExtractDecodeEditEncodeMuxTest2 extends AndroidTestCase {
             throw exception;
         }
     }
+
+    @TargetApi(19)
+    protected void requestKeyFrame(MediaCodec encoder) {
+        try {
+            Bundle reqKeyCmd = new Bundle();
+            reqKeyCmd.putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0);
+            encoder.setParameters(reqKeyCmd);
+        } catch (Exception e) {
+        }
+    }
+
     /**
      * Creates an extractor that reads its frames from {@link #mSourceResId}.
      */
@@ -749,6 +760,7 @@ public class ExtractDecodeEditEncodeMuxTest2 extends AndroidTestCase {
                     // Edit the frame and send it to the encoder.
                     if (VERBOSE) Log.d(TAG, "output surface: draw image");
                     outputSurface.drawImage();
+                    requestKeyFrame(videoEncoder);
                             inputSurface.setPresentationTime(
                             videoDecoderOutputBufferInfo.presentationTimeUs * 1000);
                     if (VERBOSE) Log.d(TAG, "input surface: swap buffers");
@@ -871,6 +883,7 @@ public class ExtractDecodeEditEncodeMuxTest2 extends AndroidTestCase {
             // Poll frames from the video encoder and send them to the muxer.
             while (mCopyVideo && !videoEncoderDone
                     && (encoderOutputVideoFormat == null || muxing)) {
+                requestKeyFrame(videoEncoder);
                 int encoderOutputBufferIndex = videoEncoder.dequeueOutputBuffer(
                         videoEncoderOutputBufferInfo, TIMEOUT_USEC);
                 if (encoderOutputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
