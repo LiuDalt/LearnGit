@@ -4,10 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.LocaleList;
 import android.os.Looper;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -15,14 +18,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.administrator.aac.TestAACActivity;
+import com.example.administrator.layoutopt.LayoutOptActivity;
 import com.example.administrator.mannotation.IdInject;
 import com.example.administrator.mannotation.IdInjectHelper;
 import com.example.administrator.myapplication.databinding.ItemLayoutBinding;
@@ -35,10 +41,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
@@ -140,6 +145,36 @@ public class MainActivity extends AppCompatActivity {
         testVideoConvert();
 
         testVideoRecord();
+
+        testLayoutOpt();
+
+    }
+
+    private void testLayoutOpt() {
+        findViewById(R.id.layout_opt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LayoutOptActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+
+    public static void setLanguage(Context context, String languageCode, String countryCode){
+        Locale locale = new Locale(languageCode, countryCode);
+        Resources resources = context.getApplicationContext().getResources();
+        Configuration config = resources.getConfiguration();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        config.locale = locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            LocaleList localeList = new LocaleList(locale);
+            LocaleList.setDefault(localeList);
+            config.setLocales(localeList);
+            context.getApplicationContext().createConfigurationContext(config);
+            Locale.setDefault(locale);
+        }
+        resources.updateConfiguration(config, dm);
     }
 
     private void testVideoRecord() {
