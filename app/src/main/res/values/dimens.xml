@@ -8,4 +8,5 @@
     <dimen name="body_slim_tv_size">13sp</dimen>
     <dimen name="body_slim_tv_top">7dp</dimen>
     <dimen name="slim_ic_margin">10dp</dimen>
+    <dimen name="sp18">18</dimen>
 </resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RingView">
+        <attr name="radius" format="dimension" ></attr>
+        <attr name="stroke_width" format="dimension"></attr>
+        <attr name="ring_color" format="color"></attr>
+        <attr name="arc_type" format="enum">
+            <enum name="quarter" value="0"></enum>
+            <enum name="two_quarter" value="1"></enum>
+            <enum name="three_quarter" value="2"></enum>
+            <enum name="circle" value="3"></enum>
+        </attr>
+    </declare-styleable>
+</resources>

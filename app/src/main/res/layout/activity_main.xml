@@ -27,27 +27,59 @@
             android:text="布局优化"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/animate_test"
+            android:text="动画"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
-
-    <Button
-        android:textAllCaps="false"
-        android:text="testAAC"
-        android:id="@+id/btn2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:textAllCaps="false"
+            android:text="testAAC"
+            android:id="@+id/btn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:textAllCaps="false"
+            android:text="testfont"
+            android:id="@+id/test_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:textAllCaps="false"
+            android:id="@+id/test_bootomsheetdialog"
+            android:text="test BottomSheetDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
     <Button
     android:textAllCaps="false"
     android:id="@+id/annotation_btn"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"/>
-
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <Button
         android:textAllCaps="false"
         android:text="测试Room"
         android:id="@+id/room_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <Button
+        android:textAllCaps="false"
+        android:text="自定义drawable"
+        android:id="@+id/test_drawable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
+
 
     <Button
         android:id="@+id/test_audio"

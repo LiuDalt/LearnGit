@@ -2,6 +2,7 @@ package com.example.administrator.myapplication;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -13,6 +14,8 @@ import android.os.Handler;
 import android.os.LocaleList;
 import android.os.Looper;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SubscriptionInfo;
@@ -20,14 +23,20 @@ import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.administrator.aac.TestAACActivity;
+import com.example.administrator.animate.AnimateActivity;
+import com.example.administrator.drawable.DrawableActivity;
+import com.example.administrator.font.FontActivity;
 import com.example.administrator.layoutopt.LayoutOptActivity;
 import com.example.administrator.mannotation.IdInject;
 import com.example.administrator.mannotation.IdInjectHelper;
@@ -148,6 +157,100 @@ public class MainActivity extends AppCompatActivity {
 
         testLayoutOpt();
 
+        testAnimate();
+
+        testFont();
+
+        testBottomSheetDialog();
+
+        testDrawable();
+    }
+
+    private void testDrawable() {
+        findViewById(R.id.test_drawable).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DrawableActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        dissmissDialog();
+    }
+
+    private void dissmissDialog() {
+    }
+
+    private void testBottomSheetDialog() {
+        findViewById(R.id.test_bootomsheetdialog).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetDialog dialog = new BottomSheetDialog(MainActivity.this);
+                Window window = dialog.getWindow();
+                window.setDimAmount(0);
+                View view = MainActivity.this.getLayoutInflater().inflate(R.layout.md_dialog_snack, null, false);
+                BottomSheetBehavior mBehavior = BottomSheetBehavior.from(view.findViewById(R.id.snack_ly));
+                mBehavior.setPeekHeight(200);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setContentView(view);
+                DialogInterface.OnKeyListener onKeyListener = new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                };
+                dialog.setOnKeyListener(onKeyListener);
+                dialog.show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(5000);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(MainActivity.this.isFinishing() && dialog.getWindow() == null){
+                                        return;
+                                    }
+                                    dialog.dismiss();
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        });
+    }
+
+    private void testFont() {
+        findViewById(R.id.test_font).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FontActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void testAnimate() {
+        findViewById(R.id.animate_test).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AnimateActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void testLayoutOpt() {

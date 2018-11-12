@@ -35,6 +35,12 @@
         </activity>
         <activity android:name="com.example.administrator.layoutopt.LayoutOptActivity">
         </activity>
+        <activity android:name="com.example.administrator.animate.AnimateActivity">
+        </activity>
+        <activity android:name="com.example.administrator.font.FontActivity">
+        </activity>
+        <activity android:name="com.example.administrator.drawable.DrawableActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Accessibility</string>
+    <string name="auto_click">TestAutoClick</string>
+</resources>
