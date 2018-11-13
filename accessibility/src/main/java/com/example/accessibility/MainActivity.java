@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.i(TAG, "(2003 << 8 | 1) value=" + (2003 << 8 | 1));
     }
 
 
@@ -64,11 +65,9 @@ public class MainActivity extends AppCompatActivity {
      * @param context：上下文
      */
     private void openAccessibility(String accessibilityServiceName, Context context){
-//        if (!isAccessibilitySettingsOn(accessibilityServiceName,context)) {
-//            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-//            startActivity(intent);
-//        }
-        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        startActivity(intent);
+        if (!isAccessibilitySettingsOn(accessibilityServiceName,context)) {
+            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            startActivity(intent);
+        }
     }
 }

@@ -1,14 +1,22 @@
 package com.example.accessibility;
 
+import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 public class AcessibilityManager {
-    private static final long WORK_DURATION = 100;
+    public static final int WORK_DURATION = 1000;
+    public static final int SEND_MSG_DURATION = WORK_DURATION * 5;
+    private final Handler mHandler;
     private OperateState mState;
     private String TAG = "AcessibilityManager";
     private boolean mWorkable = true;
+    private boolean mWorkStarted = false;
     private long mLastWorkTime = 0;
-
+    private HandlerThread mHandlerThread;
     private static AcessibilityManager sManager;
     private MyAccessibilityService mService;
 
@@ -23,13 +31,33 @@ public class AcessibilityManager {
         return sManager;
     }
 
-    public void start(int state){
-        mState = new OperateState();
-        mState.setState(state);
+    private AcessibilityManager() {
+        mHandlerThread = new HandlerThread("TaskThread");
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper()){
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public void handleMessage(Message msg) {
+                if(mWorkable){
+                    work();
+                }
+            }
+        };
     }
 
-    public void next(){
+    public void start(){
+        if(mWorkStarted || !mWorkable){
+            return;
+        }
+        start(StateConstant.JOIN_GROUP);
+    }
 
+    private void start(int state){
+        mState = new OperateState();
+        mState.setState(state);
+        mWorkStarted = true;
+        mHandler.sendEmptyMessageDelayed(mState.getState(), mState.getDuration());
+        Log.d(TAG, "start() called with: state = [" + mState.getStateStr() + "]");
     }
 
     public int getState(){
@@ -43,43 +71,39 @@ public class AcessibilityManager {
         mService = myAccessibilityService;
     }
 
-    public void work() {
-        if(System.currentTimeMillis() - mLastWorkTime < WORK_DURATION){
-            return;
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public boolean work() {
+        if(!mWorkable || !mWorkStarted){
+            return false;
         }
         boolean hadWork = false;
-        if(getState() == StateConstant.INIT_STATE){
-            if(!mWorkable){
-                return;
-            }
-            start(StateConstant.INPUT_TEXT);
-        } else if(getState() == StateConstant.JOIN_GROUP){
-            if(AccessibilityUtils.performClick(mService, "invite_accept")){
-                Log.i(TAG, "joinGroup-----");
-                mState.setState(StateConstant.INPUT_TEXT);
-                hadWork = true;
-            }
-        }
-        else if(getState() == StateConstant.INPUT_TEXT){
-            if(AccessibilityUtils.performInputText(mService, "entry", "hi everyone!")){
-                mState.setState(StateConstant.SEND_MSG);
-                Log.i(TAG, "inputMsg-----");
-                hadWork = true;
-            }
-        }else if(getState() == StateConstant.SEND_MSG){
-            if(AccessibilityUtils.performClick(mService, "send")){
-                Log.i(TAG, "sendMsg-----");
-                mState.setState(StateConstant.INIT_STATE);
-                mWorkable = false;
-                hadWork = true;
-            }
+        if(mState.perform(mService)){
+            hadWork = true;
+            mState.next();
         }
         if(hadWork){
             mLastWorkTime = System.currentTimeMillis();
+            Log.d(TAG, "work() called " + mState.getStateStr() + " end");
         }
+        if(mState.isEnd()){
+            reset();
+        }
+        mHandler.sendEmptyMessageDelayed(mState.getState(), mState.getDuration());
+        return hadWork;
     }
 
     public void reset() {
-        mWorkable = true;
+        mWorkable = false;
+        mWorkStarted = false;
+    }
+
+    public void enableWork(boolean enable){
+        mWorkable = enable;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public void destroy() {
+        mHandlerThread.quitSafely();
     }
 }

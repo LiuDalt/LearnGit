@@ -1,6 +1,8 @@
 package com.example.accessibility;
 
 import android.accessibilityservice.AccessibilityService;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -72,14 +74,15 @@ public class MyAccessibilityService extends AccessibilityService {
         eventText = eventText + ":" + eventType;
         Log.i(TAG, eventText);
         if(event.getEventType() ==  AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED){
-            AcessibilityManager.getInstance().work();
+            AcessibilityManager.getInstance().start();
         }
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public void onInterrupt() {
-
+        AcessibilityManager.getInstance().destroy();
     }
 
 
