@@ -1,22 +1,17 @@
-package com.example.accessibility;
+package com.example.accessibility.service;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.view.accessibility.AccessibilityManager;
 
 public class OperateState {
     private int mState = StateConstant.INIT_STATE;
     private ActionInfo mActionInfo;
-    private OperateState mNextState;
-    private int mDuraiton = 1000;
+    private int mDuraiton = WAAccessibilityManager.UNIT_OPERATE_DURATION;
 
     public int getState() {
         return mState;
     }
 
-    public OperateState getNextState() {
-        return mNextState;
-    }
 
     public void setState(int state) {
         mState = state;
@@ -24,7 +19,7 @@ public class OperateState {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public boolean perform(MyAccessibilityService service){
+    public boolean perform(WAAccessibilityService service){
         return AccessibilityUtils.performAction(service, getActionInfo());
     }
 
@@ -36,10 +31,10 @@ public class OperateState {
         } else if(getState() == StateConstant.INPUT_TEXT){
             setState(StateConstant.SEND_MSG);
         }else if(getState() == StateConstant.SEND_MSG){
-            setDuraiton(AcessibilityManager.SEND_MSG_DURATION);
+            setDuraiton(WAAccessibilityManager.SEND_MSG_OPERATE_DURATION);
             setState(StateConstant.SHOW_GROUP_MENU);
         }else if(getState() == StateConstant.SHOW_GROUP_MENU){
-            setDuraiton(AcessibilityManager.WORK_DURATION);
+            setDuraiton(WAAccessibilityManager.UNIT_OPERATE_DURATION);
             setState(StateConstant.SHOW_MORE_MENU);
         }else if(getState() == StateConstant.SHOW_MORE_MENU){
             setState(StateConstant.SHOW_EXIT_DIALOG);
@@ -52,10 +47,6 @@ public class OperateState {
 
     public ActionInfo getActionInfo() {
         return mActionInfo;
-    }
-
-    public void setNextState(OperateState nextState) {
-        mNextState = nextState;
     }
 
     public String getStateStr() {

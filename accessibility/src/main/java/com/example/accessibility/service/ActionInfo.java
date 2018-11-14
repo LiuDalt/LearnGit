@@ -1,4 +1,4 @@
-package com.example.accessibility;
+package com.example.accessibility.service;
 
 public class ActionInfo {
     public static final int ACTION_CLICK = 0;
@@ -35,7 +35,7 @@ public class ActionInfo {
                 break;
             case StateConstant.INPUT_TEXT:
                 actionInfo.mResStr = "entry";
-                actionInfo.mExtra = "hi everyone!";
+                actionInfo.mExtra = "hello,ladies and gentlemen, nice to meet you!!!";
                 actionInfo.mActionType = ActionInfo.ACTION_INPUT;
                 break;
             case StateConstant.INIT_STATE:

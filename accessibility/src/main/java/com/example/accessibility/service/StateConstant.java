@@ -1,4 +1,4 @@
-package com.example.accessibility;
+package com.example.accessibility.service;
 
 public class StateConstant {
     public final static int JOIN_GROUP = 0;

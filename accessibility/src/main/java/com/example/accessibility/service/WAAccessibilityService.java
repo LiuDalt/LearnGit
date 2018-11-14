@@ -1,24 +1,22 @@
-package com.example.accessibility;
+package com.example.accessibility.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
-public class MyAccessibilityService extends AccessibilityService {
-    public static final String WHATSAPP = "com.whatsapp";
-    private static final String TAG = MyAccessibilityService.class.getName();
-
-    public MyAccessibilityService() {
+public class WAAccessibilityService extends AccessibilityService {
+    private static final String TAG = WAAccessibilityService.class.getName();
+    public WAAccessibilityService() {
     }
 
     @Override
     protected void onServiceConnected() {
-        AcessibilityManager.getInstance().setService(this);
-        Log.i(TAG, "config success!");
-
+        WAAccessibilityManager.getInstance().setService(this);
     }
+
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -73,17 +71,15 @@ public class MyAccessibilityService extends AccessibilityService {
         }
         eventText = eventText + ":" + eventType;
         Log.i(TAG, eventText);
-        if(event.getEventType() ==  AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED){
-            AcessibilityManager.getInstance().start();
+        if(event.getEventType() ==  AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED &&
+                WAAccessibilityManager.getInstance().isNeddReStartForNextWindowChanged()){
+            WAAccessibilityManager.getInstance().start();
         }
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public void onInterrupt() {
-        AcessibilityManager.getInstance().destroy();
+        WAAccessibilityManager.getInstance().destroy();
     }
-
-
 }

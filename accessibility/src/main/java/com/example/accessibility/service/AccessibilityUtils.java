@@ -1,4 +1,4 @@
-package com.example.accessibility;
+package com.example.accessibility.service;
 
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.TargetApi;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class AccessibilityUtils {
     public static final String TAG = "AcessibilityManager";
-    public static final String WHATSAPP = "com.whatsapp";
+
     //点击
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static boolean performClick(AccessibilityService context, String resourceId) {
@@ -75,7 +75,7 @@ public class AccessibilityUtils {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private static AccessibilityNodeInfo findNodeInfo(AccessibilityService service, ActionInfo actionInfo) {
         AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
-        String resPrefix = WHATSAPP + ":id/";
+        String resPrefix = WhatsAppConstant.RES_PREFIX;
         if(!TextUtils.isEmpty(actionInfo.mResStr)){
             return findNodeInfosById(nodeInfo,resPrefix + actionInfo.mResStr);
         }
@@ -165,7 +165,7 @@ public class AccessibilityUtils {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static boolean performInputText(MyAccessibilityService service, String resourceId, String text) {
+    public static boolean performInputText(WAAccessibilityService service, String resourceId, String text) {
         AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
         AccessibilityNodeInfo targetNode = null;
         targetNode = findNodeInfosById(nodeInfo,"com.whatsapp:id/" + resourceId);
