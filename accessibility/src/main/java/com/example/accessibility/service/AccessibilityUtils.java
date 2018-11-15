@@ -33,6 +33,9 @@ public class AccessibilityUtils {
         if (targetNode != null && targetNode.isClickable() && actionInfo.isInput()) {
             return performInput(service, targetNode, actionInfo);
         }
+
+
+
         return false;
     }
 

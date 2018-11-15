@@ -6,8 +6,10 @@ import android.view.View;
 
 import com.example.accessibility.R;
 import com.example.accessibility.data.GroupManager;
+import com.example.accessibility.data.db.DBHelper;
 import com.example.accessibility.service.WAAccessibilityManager;
 import com.example.accessibility.service.WhatsAppConstant;
+import com.example.accessibility.thread.ThreadUtils;
 
 public class MainActivity extends AppCompatActivity {
     static String TAG = "MainActivity";
@@ -30,9 +32,25 @@ public class MainActivity extends AppCompatActivity {
                 GroupManager.getInstance().loadData();
             }
         });
+        findViewById(R.id.test_db).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ThreadUtils.runOnBackgroundThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(DBHelper.copyDBFromFile()){
+                            DBHelper.query();
+                        }
+
+                    }
+                });
+            }
+        });
         GroupManager.getInstance().updateInfo(0,WhatsAppConstant.NUM_PER_READ_DEFAULT, 0);
         WAAccessibilityManager.getInstance().updateInfo(WhatsAppConstant.NUM_PER_READ_DEFAULT, WhatsAppConstant.OPERATE_TIME_DEFAULT);
+
     }
+
 
 
     @Override
