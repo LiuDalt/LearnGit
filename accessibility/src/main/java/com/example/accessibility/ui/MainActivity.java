@@ -1,12 +1,7 @@
 package com.example.accessibility.ui;
 
-import android.content.Context;
-import android.content.Intent;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.example.accessibility.R;
@@ -35,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
                 GroupManager.getInstance().loadData();
             }
         });
-        GroupManager.getInstance().updateInfo(0, WhatsAppConstant.NUM_PER_READ_DEFAULT, 0);
-        WAAccessibilityManager.getInstance().updateInfo(WhatsAppConstant.NUM_PER_READ_DEFAULT, WhatsAppConstant.OPERATE_DURATION_DEFAULT);
+        GroupManager.getInstance().updateInfo(0,WhatsAppConstant.NUM_PER_READ_DEFAULT, 0);
+        WAAccessibilityManager.getInstance().updateInfo(WhatsAppConstant.NUM_PER_READ_DEFAULT, WhatsAppConstant.OPERATE_TIME_DEFAULT);
     }
 
 

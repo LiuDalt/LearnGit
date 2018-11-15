@@ -4,6 +4,6 @@ public class WhatsAppConstant {
     public static final String WHATSAPP = "com.whatsapp";
     public static final String WHATSAPP_HOME_ACTIVITY = WHATSAPP + ".HomeActivity";
     public static final String RES_PREFIX = WHATSAPP + ":id/";
-    public static final int NUM_PER_READ_DEFAULT = 5;
-    public static final long OPERATE_DURATION_DEFAULT = 30 * 1000;
+    public static final int NUM_PER_READ_DEFAULT = 10;
+    public static final int OPERATE_TIME_DEFAULT = 16;//每天12点发
 }

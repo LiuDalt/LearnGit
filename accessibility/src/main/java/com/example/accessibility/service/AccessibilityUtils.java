@@ -1,7 +1,6 @@
 package com.example.accessibility.service;
 
 import android.accessibilityservice.AccessibilityService;
-import android.annotation.TargetApi;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
@@ -16,28 +15,14 @@ import java.util.List;
 public class AccessibilityUtils {
     public static final String TAG = "AcessibilityManager";
 
-    //点击
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static boolean performClick(AccessibilityService context, String resourceId) {
-
-        Log.i("mService","点击执行");
-        AccessibilityNodeInfo nodeInfo = context.getRootInActiveWindow();
-        AccessibilityNodeInfo targetNode = null;
-        targetNode = findNodeInfosById(nodeInfo,"com.whatsapp:id/" + resourceId);
-        if (targetNode != null && targetNode.isClickable()) {
-            targetNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-            Log.d(TAG, "performClick() called with: context = [" + context + "], resourceId = [" + resourceId + "]");
-            return true;
-        }
-        return false;
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public static boolean performAction(AccessibilityService service, ActionInfo actionInfo){
         AccessibilityNodeInfo targetNode = null;
         targetNode = findNodeInfo(service, actionInfo);
         if(targetNode != null) {
-            Log.i(TAG, "className=" + targetNode.getClassName());
+            if(actionInfo.isDetectAndClick()){
+                return performAction(service, actionInfo.mDetectActionInfo);
+            }
         }
         if (targetNode != null && targetNode.isClickable() && actionInfo.isClick()) {
             return targetNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -102,8 +87,6 @@ public class AccessibilityUtils {
             if(list != null && !list.isEmpty()) {
                 return list.get(0);
             }
-        }else{
-            Log.d(TAG, "findNodeInfosById() called with: nodeInfo = [" + nodeInfo + "], resId = [" + resId + "]");
         }
         return null;
     }
@@ -162,24 +145,5 @@ public class AccessibilityUtils {
             }
         }
         return null;
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public static boolean performInputText(WAAccessibilityService service, String resourceId, String text) {
-        AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
-        AccessibilityNodeInfo targetNode = null;
-        targetNode = findNodeInfosById(nodeInfo,"com.whatsapp:id/" + resourceId);
-        if (Build.VERSION.SDK_INT >= 21 && targetNode != null) {
-            //android>=21 = 5.0时可以用ACTION_SET_TEXT
-            Bundle arg = new Bundle();
-            arg.putString(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
-            targetNode.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arg);
-            Log.d(TAG, "performInputText() called with: service = [" + service + "], resourceId = [" + resourceId + "], text = [" + text + "]");
-            return true;
-        }else{
-            Log.d(TAG, "performInputText() called with: service = [" + service + "], resourceId = [" + resourceId + "], targetNode = [" + targetNode + "]");
-        }
-        return false;
-
     }
 }

@@ -15,8 +15,15 @@ public class WAAccessibilityService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         WAAccessibilityManager.getInstance().setService(this);
+        Log.d(TAG, "onServiceConnected() called");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        WAAccessibilityManager.getInstance().destroy();
+    }
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {

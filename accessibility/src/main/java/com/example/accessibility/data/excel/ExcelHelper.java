@@ -22,23 +22,21 @@ public class ExcelHelper {
             int sheetRows = sheet.getRows();
             int sheetColumns = sheet.getColumns();
             if(startIndex >= sheetRows){
-                return groups;
+                startIndex = startIndex % sheetRows;
             }
             int maxIndex = startIndex + num;
-            if(maxIndex >= sheetRows){
-                maxIndex = sheetRows;
-            }
             for (int i = startIndex; i < maxIndex; i++) {
                 Group group = new Group();
-                group.mGroupLink = sheet.getCell(0, i).getContents();
-                group.mRowIndex = i;
+                group.mGroupLink = sheet.getCell(0, i % sheetRows).getContents();
+                group.mRowIndex = i % sheetRows;
                 group.mSheetIndex = sheetIndex;
-                group.mCountry = sheet.getCell(1, i).getContents();
+                group.mCountry = sheet.getCell(1, i % sheetRows).getContents();
                 groups.add(group);
             }
             Log.i(TAG, "sheetNum=" + workbook.getNumberOfSheets() + " sheetIndex=" + sheetIndex  + " rows=" + sheetRows + " columns=" + sheetColumns);
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e(TAG, "read excel exception " + e);
         }
         return groups;
     }

@@ -1,8 +1,12 @@
 package com.example.accessibility.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ActionInfo {
     public static final int ACTION_CLICK = 0;
     public static final int ACTION_INPUT = 1;
+    public static final int ACTION_DETECT_CLICK = 2;
 
     public String mResStr;//优先级1 //view资源 id
     public String mText;//优先级2 // view text
@@ -12,7 +16,7 @@ public class ActionInfo {
     public String mClassName;//优先级6 view的类名
 
     public Object mExtra;//参数信息
-    public boolean mIsNeedCheckClassName = false;
+    public ActionInfo mDetectActionInfo;
 
     public int mActionType = ACTION_CLICK;
 
@@ -22,6 +26,10 @@ public class ActionInfo {
 
     public boolean isInput(){
         return mActionType == ACTION_INPUT;
+    }
+
+    public boolean isDetectAndClick(){
+        return mActionType == ACTION_DETECT_CLICK;
     }
 
     public static ActionInfo getActionInfo(int state){
@@ -35,7 +43,7 @@ public class ActionInfo {
                 break;
             case StateConstant.INPUT_TEXT:
                 actionInfo.mResStr = "entry";
-                actionInfo.mExtra = "hello,ladies and gentlemen, nice to meet you!!!";
+                actionInfo.mExtra = "https://www.like.video/s/6607378458340811630?c=whatsapp&special=1&l=en";
                 actionInfo.mActionType = ActionInfo.ACTION_INPUT;
                 break;
             case StateConstant.INIT_STATE:
@@ -56,10 +64,27 @@ public class ActionInfo {
             case StateConstant.SHOW_EXIT_DIALOG:
                 actionInfo.mNodeIndex = new int[]{0, 2};
                 break;
+            case StateConstant.GROUP_FULL:
+                actionInfo.mActionType = ACTION_DETECT_CLICK;
+                actionInfo.mText = "您无法加入群组，群组已满。";
+                actionInfo.mDetectActionInfo = new ActionInfo();
+                actionInfo.mDetectActionInfo.mActionType = ACTION_CLICK;
+                actionInfo.mDetectActionInfo.mResStr = "ok";
             default:
                 break;
 
         }
         return actionInfo;
+    }
+
+    public static List<ActionInfo> getErrorActionInfo(int errorState) {
+        List<ActionInfo> infos = new ArrayList<>();
+        if(errorState == StateConstant.INPUT_TEXT){
+            ActionInfo actionInfo = new ActionInfo();
+            actionInfo.mActionType = ACTION_DETECT_CLICK;
+            actionInfo.mText = "您无法加入群组，群组已满。";
+            infos.add(actionInfo);
+        }
+        return infos;
     }
 }

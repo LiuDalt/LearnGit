@@ -2,12 +2,9 @@ package com.example.accessibility.data;
 
 import android.os.Environment;
 import android.util.Log;
-import android.view.accessibility.AccessibilityManager;
 
 import com.example.accessibility.data.excel.ExcelHelper;
 import com.example.accessibility.data.excel.ExcelInfo;
-import com.example.accessibility.service.WAAccessibilityManager;
-import com.example.accessibility.service.WhatsAppConstant;
 import com.example.accessibility.thread.ThreadUtils;
 
 import java.io.File;
@@ -20,11 +17,13 @@ public class GroupManager {
     private static GroupManager sManager;
     private ExcelInfo mExcelInfo;
     private int mStartIndex = 0;
-    private int mNumPerRead = WhatsAppConstant.NUM_PER_READ_DEFAULT;
+    private int mNumPerRead = 50;
     private List<Group> mGroups = new ArrayList<>();
     private String mExcelPath;
     private int mSheedIndex = 0;
     private Group mLastGroup;
+    private int mMaxRead;
+    private int mReadCount = 0;
 
     public static GroupManager getInstance() {
         if(sManager == null){
@@ -37,10 +36,13 @@ public class GroupManager {
         return sManager;
     }
 
-    public void updateInfo(int sheetIndex, int numPerRead, int startIndex){
+    public void updateInfo(int sheetIndex, int maxRead, int startIndex){
         mSheedIndex = sheetIndex;
-        mNumPerRead = numPerRead;
         mStartIndex = startIndex;
+        mMaxRead = maxRead;
+        if(mNumPerRead > mMaxRead){
+            mNumPerRead = mMaxRead;
+        }
         mGroups.clear();
         loadData();
     }
@@ -54,7 +56,7 @@ public class GroupManager {
             @Override
             public void run() {
                 mExcelInfo = ExcelHelper.getExcelInfo(mExcelPath);
-                Log.i(TAG, "excelInf::" + mExcelInfo.toString());
+                Log.i(TAG, "excelInfo::" + mExcelInfo.toString());
             }
         });
     }
@@ -66,6 +68,7 @@ public class GroupManager {
                 List<Group> groups = ExcelHelper.loadGroups(mExcelPath, mSheedIndex, mStartIndex, mNumPerRead);
                 mStartIndex = (mStartIndex + groups.size()) % mExcelInfo.getSheetInfo(mSheedIndex).mRows;
                 mGroups.addAll(groups);
+                mReadCount += groups.size();
                 Log.i(TAG, groups.toString());
             }
         });
@@ -73,7 +76,7 @@ public class GroupManager {
 
     public Group obtainGroup() {
         mLastGroup = mGroups.remove(0);
-        if(mGroups.size() <= MIN_GROUP_SIZE){
+        if(mGroups.size() <= MIN_GROUP_SIZE && mReadCount < mMaxRead){
             loadData();
         }
         return mLastGroup;
