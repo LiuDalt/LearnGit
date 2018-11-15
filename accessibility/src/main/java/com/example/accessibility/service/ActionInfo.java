@@ -7,6 +7,7 @@ public class ActionInfo {
     public static final int ACTION_CLICK = 0;
     public static final int ACTION_INPUT = 1;
     public static final int ACTION_DETECT_CLICK = 2;
+    public static final int ACTION_DETECT = 3;
 
     public String mResStr;//优先级1 //view资源 id
     public String mText;//优先级2 // view text
@@ -70,6 +71,9 @@ public class ActionInfo {
                 actionInfo.mDetectActionInfo = new ActionInfo();
                 actionInfo.mDetectActionInfo.mActionType = ACTION_CLICK;
                 actionInfo.mDetectActionInfo.mResStr = "ok";
+            case StateConstant.ONLY_MANAGER_SEND_MSG:
+                actionInfo.mActionType = ACTION_DETECT;
+                actionInfo.mResStr = "read_only_chat_info";
             default:
                 break;
 
@@ -86,5 +90,9 @@ public class ActionInfo {
             infos.add(actionInfo);
         }
         return infos;
+    }
+
+    public boolean isDetect() {
+        return mActionType == ACTION_DETECT;
     }
 }

@@ -23,6 +23,9 @@ public class AccessibilityUtils {
             if(actionInfo.isDetectAndClick()){
                 return performAction(service, actionInfo.mDetectActionInfo);
             }
+            if(actionInfo.isDetect()){
+                return true;
+            }
         }
         if (targetNode != null && targetNode.isClickable() && actionInfo.isClick()) {
             return targetNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -43,11 +46,6 @@ public class AccessibilityUtils {
             Bundle arguments = new Bundle();
             arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT, AccessibilityNodeInfo.MOVEMENT_GRANULARITY_LINE);
             arguments.putBoolean(AccessibilityNodeInfo.ACTION_ARGUMENT_EXTEND_SELECTION_BOOLEAN, true);
-//            if (isFromStart) {
-//                node.performAction(AccessibilityNodeInfo.ACTION_NEXT_AT_MOVEMENT_GRANULARITY, arguments);
-//            } else {
-//                node.performAction(AccessibilityNodeInfo.ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, arguments);
-//            }
             targetNode.performAction(AccessibilityNodeInfo.ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, arguments);
             ClipboardManager cmb = (ClipboardManager) service.getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
             cmb.setText((String) actionInfo.mExtra);

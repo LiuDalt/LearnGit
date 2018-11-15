@@ -214,7 +214,7 @@ public class WAAccessibilityManager implements OperateListener{
         Intent intent = new Intent(Intent.ACTION_VIEW);
         mCurrGroup = GroupManager.getInstance().obtainGroup();
         Log.i(TAG, "startGroupLink:" + mCurrGroup.toString());
-        intent.setData(Uri.parse(mCurrGroup.mGroupLink));
+        intent.setData(Uri.parse("https://chat.whatsapp.com/invite/1hzPJg6JbIW17UGmHUCwzc"));
         intent.setComponent(new ComponentName(WhatsAppConstant.WHATSAPP, WhatsAppConstant.WHATSAPP_HOME_ACTIVITY));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         mService.startActivity(intent);

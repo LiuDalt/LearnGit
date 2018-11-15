@@ -42,14 +42,16 @@ public class OperateState {
         if(state == StateConstant.INIT_STATE){
             hitStates.add(obtainState(StateConstant.JOIN_GROUP));
             hitStates.add(obtainState(StateConstant.INPUT_TEXT));
+            hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
         }else if(state == StateConstant.JOIN_GROUP){
             hitStates.add(obtainState(StateConstant.GROUP_FULL));
             hitStates.add(obtainState(StateConstant.INPUT_TEXT));
+            hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
         }else if(state == StateConstant.GROUP_FULL){
             hitStates.add(obtainState(StateConstant.END_STATE));
         }else if(state == StateConstant.INPUT_TEXT){
             hitStates.add(obtainState(StateConstant.SEND_MSG));
-            hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
+
         }else if(state == StateConstant.SEND_MSG){
             hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
         }else if(state == StateConstant.SHOW_GROUP_MENU){
@@ -61,7 +63,7 @@ public class OperateState {
         } else if(state == StateConstant.EXIT_GROUP){
             hitStates.add(obtainState(StateConstant.END_STATE));
         } else if(state == StateConstant.ONLY_MANAGER_SEND_MSG){
-            hitStates.add(obtainState(StateConstant.END_STATE));
+            hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
         }
         return hitStates;
     }
