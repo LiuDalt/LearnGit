@@ -14,6 +14,7 @@ import com.example.accessibility.data.Group;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
         List<Group> list = new ArrayList<>();
         try {
             SQLiteDatabase db = sDBHelper.getReadableDatabase();
-            Cursor cursor = db.query(TABLE_NAME, new String[] { "id", "url" }, "id>= ? and id < ?",
+            Cursor cursor = db.query(TABLE_NAME, new String[] { "id", "url" }, "id>= ? and id <= ?",
                     new String[] { String.valueOf(start), String.valueOf(end) }, null, null, null);
             while (cursor.moveToNext()){
                 Group group = new Group();
@@ -73,30 +74,26 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public static boolean copyDBFromFile(){
-        File src = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "access.whatsapp" + File.separator + "ws_db.db");
         File dst = new File(DB_PATH);
         if(dst.exists()){
             return true;
         }
-        if(src.exists()){
-            try {
-                FileInputStream fis = new FileInputStream(src);
-                FileOutputStream fos = new FileOutputStream(dst);
-                byte[] buf = new byte[1024];
-                int count = 0;
-                while ((count = fis.read(buf)) > 0) {
-                    fos.write(buf, 0, count);
-                }
-                fis.close();
-                fos.close();
-                Log.i(TAG, "copy db success");
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            InputStream is = AccessibilityApplication.sContext.getAssets().open("ws_db.db");
+            FileOutputStream fos = new FileOutputStream(dst);
+            byte[] buf = new byte[1024];
+            int count = 0;
+            while ((count = is.read(buf)) > 0) {
+                fos.write(buf, 0, count);
             }
+            is.close();
+            fos.close();
+            Log.i(TAG, "copy db success");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
-
     }
 
     @Override

@@ -43,15 +43,15 @@ public class OperateState {
             hitStates.add(obtainState(StateConstant.JOIN_GROUP));
             hitStates.add(obtainState(StateConstant.INPUT_TEXT));
             hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
+            hitStates.add(obtainState(StateConstant.GROUP_FULL_OR_INVALID));
         }else if(state == StateConstant.JOIN_GROUP){
-            hitStates.add(obtainState(StateConstant.GROUP_FULL));
+            hitStates.add(obtainState(StateConstant.GROUP_FULL_OR_INVALID));
             hitStates.add(obtainState(StateConstant.INPUT_TEXT));
             hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
-        }else if(state == StateConstant.GROUP_FULL){
+        }else if(state == StateConstant.GROUP_FULL_OR_INVALID){
             hitStates.add(obtainState(StateConstant.END_STATE));
         }else if(state == StateConstant.INPUT_TEXT){
             hitStates.add(obtainState(StateConstant.SEND_MSG));
-
         }else if(state == StateConstant.SEND_MSG){
             hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
         }else if(state == StateConstant.SHOW_GROUP_MENU){
@@ -80,8 +80,8 @@ public class OperateState {
             case StateConstant.INPUT_TEXT:
                 operateState.setState(StateConstant.INPUT_TEXT);
                 break;
-            case StateConstant.GROUP_FULL:
-                operateState.setState(StateConstant.GROUP_FULL);
+            case StateConstant.GROUP_FULL_OR_INVALID:
+                operateState.setState(StateConstant.GROUP_FULL_OR_INVALID);
                 break;
             case StateConstant.SEND_MSG:
                 operateState.setDuraiton(WAAccessibilityManager.SEND_MSG_OPERATE_DURATION);
@@ -168,7 +168,7 @@ public class OperateState {
                 return "joinGroup";
             case StateConstant.SHOW_EXIT_DIALOG:
                 return "showExitDialog";
-            case StateConstant.GROUP_FULL:
+            case StateConstant.GROUP_FULL_OR_INVALID:
                 return "group_full";
             case StateConstant.ONLY_MANAGER_SEND_MSG:
                 return "only_manager_send_msg";

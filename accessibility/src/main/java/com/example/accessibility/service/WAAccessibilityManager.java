@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -17,6 +16,8 @@ import android.util.Log;
 
 import com.example.accessibility.data.Group;
 import com.example.accessibility.data.GroupManager;
+import com.example.accessibility.io.FileCounstant;
+import com.example.accessibility.io.FileUtils;
 import com.example.accessibility.sharepre.SharePreferenceConstant;
 import com.example.accessibility.sharepre.SharePreferenceUtils;
 import com.example.accessibility.sharepre.Type;
@@ -25,14 +26,9 @@ import com.example.accessibility.time.Time;
 import com.example.accessibility.time.TimeChageReceiver;
 import com.example.accessibility.time.TimeUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.logging.SocketHandler;
-
 public class WAAccessibilityManager implements OperateListener{
-    public static final int UNIT_OPERATE_DURATION = 400;
-    public static final int SEND_MSG_OPERATE_DURATION = 6000;
+    public static final int UNIT_OPERATE_DURATION = 500;
+    public static final int SEND_MSG_OPERATE_DURATION = 2000;
     public static final String WA_ACCESSIBILITY_SERVICE = "com.example.accessibility/WAAccessibilityService";
     public static final int OPERATE_ERROR_COUNT = 5;
     private Handler mHandler;
@@ -57,6 +53,7 @@ public class WAAccessibilityManager implements OperateListener{
     private long mLastPerfomTime;
     private int mGoupFullCount = 0;
     private int mOnlyMangerSendMsgCount = 0;
+    private Runnable mHeartRunnable;
 
     public static WAAccessibilityManager getInstance() {
         if(sManager == null){
@@ -141,10 +138,26 @@ public class WAAccessibilityManager implements OperateListener{
 
     public void setService(WAAccessibilityService WAAccessibilityService) {
         mService = WAAccessibilityService;
-
         setHandler();
         registerTimeReceiver();
         checkStartWhatsApp();
+        startHeartBeat();
+    }
+
+    private void startHeartBeat() {
+        if(mHeartRunnable == null) {
+            mHeartRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    int lastStart = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_START, 0, Type.INTEGER);
+                    int lastEnd = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_END, 0, Type.INTEGER);
+                    String str = "hearbeat:operateCount=" + mOperateCount + " lastStart=" + lastStart + " lastEnd=" + lastEnd + " groupFull=" + mGoupFullCount + " onlyManagerSendMsg=" + mOnlyMangerSendMsgCount;
+                    Log.i(TAG, "hearbeat--" + str);
+                    FileUtils.write(str, FileCounstant.getExternalFileDir() + "heartbeat .txt");
+                }
+            };
+        }
+        ThreadUtils.runOnBackgroundThreadFixRate(mHeartRunnable, 15000);
     }
 
     private void setHandler() {
@@ -189,7 +202,6 @@ public class WAAccessibilityManager implements OperateListener{
         }
         if(mState.isEnd()){
             reset();
-            Log.i(TAG, "operate end----" + mOperateCount);
             onOperateEnd();
         }else{
             mHandler.sendEmptyMessageDelayed(mState.getState(), mState.getDuration());
@@ -199,7 +211,7 @@ public class WAAccessibilityManager implements OperateListener{
     }
 
     private void statisErrorState() {
-        if(mState.getState() == StateConstant.GROUP_FULL){
+        if(mState.getState() == StateConstant.GROUP_FULL_OR_INVALID){
             int count = (int) SharePreferenceUtils.get(SharePreferenceConstant.GROUP_FULL_COUNT, 0, Type.INTEGER);
             count++;
             SharePreferenceUtils.put(SharePreferenceConstant.GROUP_FULL_COUNT, count, Type.INTEGER);
@@ -236,19 +248,13 @@ public class WAAccessibilityManager implements OperateListener{
         }
         mNeddReStartForNextWindowChanged = true;
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        mCurrGroup = GroupManager.getInstance().obtainGroup();
-        if(mCurrGroup == null){
-            Log.i(TAG, "group null-----");
-            return;
-        }
-        Log.i(TAG, "startGroupLink:" + mCurrGroup.toString());
         intent.setData(Uri.parse(mCurrGroup.mGroupLink));
         intent.setComponent(new ComponentName(WhatsAppConstant.WHATSAPP, WhatsAppConstant.WHATSAPP_HOME_ACTIVITY));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         mService.startActivity(intent);
     }
 
-    public void startWhatsApp(final int delay) {
+    public void startWhatsApp(final int delay, final boolean needReObtainData) {
         if(mOperateRunnable == null){
             mOperateRunnable = new Runnable() {
                 @Override
@@ -258,9 +264,22 @@ public class WAAccessibilityManager implements OperateListener{
                         SharePreferenceUtils.put(SharePreferenceConstant.LAST_START_OPERATE_TIME,
                                 TimeUtils.getCurrTime().toSharePreferenceStr(),
                                 Type.STRING);
+                        SharePreferenceUtils.put(SharePreferenceConstant.GROUP_FULL_COUNT, 0, Type.INTEGER);
+                        SharePreferenceUtils.put(SharePreferenceConstant.ONLY_MANAGER_SEND_MSG, 0, Type.INTEGER);
                     }
                     mStartTime = System.currentTimeMillis();
                     Log.i(TAG, "TimeStatist:start " + mOperateCount + " time=" + System.currentTimeMillis());
+                    if(needReObtainData) {
+                        mCurrGroup = GroupManager.getInstance().obtainGroup();
+                    }
+                    if(mCurrGroup == null){
+                        mCurrGroup = GroupManager.getInstance().obtainGroup();
+                        if(mCurrGroup == null) {
+                            Log.i(TAG, "group null-----");
+                            return;
+                        }
+                    }
+                    Log.i(TAG, "startGroupLink:" + mCurrGroup.toString());
                     startWhatsApp();
                 }
             };
@@ -291,21 +310,17 @@ public class WAAccessibilityManager implements OperateListener{
         Log.i(TAG, "TimeStatist:end " + mOperateCount + " time=" + time + " cost=" + (time - mStartTime));
         mOperateCount++;
         if(isOperateContinue()) {
-            startWhatsApp(1000);
+            startWhatsApp(1000, true);
         }else{
+            Log.i(TAG, "operateEnd-----" + mOperateCount);
             ThreadUtils.runOnBackgroundThread(new Runnable() {
                 @Override
                 public void run() {
                     int lastStart = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_START, 0, Type.INTEGER);
                     int lastEnd = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_END, 0, Type.INTEGER);
                     String str = "lastStart=" + lastStart + " lastEnd=" + lastEnd + " groupFull=" + mGoupFullCount + " onlyManagerSendMsg=" + mOnlyMangerSendMsgCount;
-                    try {
-                        FileOutputStream fileOutputStream = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "access.whatsapp/"+ System.currentTimeMillis() + " .txt");
-                        fileOutputStream.write(str.getBytes());
-                        fileOutputStream.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    Log.i(TAG, "operateStatis= " + str);
+                    FileUtils.write(str, FileCounstant.getExternalFileDir() + TimeUtils.getCurrTime().toSharePreferenceStr() + " .txt");
                 }
             });
         }
@@ -332,7 +347,7 @@ public class WAAccessibilityManager implements OperateListener{
 //                    }
 //                }
                 if(needStart){
-                    startWhatsApp(500);
+                    startWhatsApp(500, true);
                 }
             }
         });

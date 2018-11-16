@@ -1,5 +1,9 @@
 package com.example.accessibility.service;
 
+import com.example.accessibility.sharepre.SharePreferenceConstant;
+import com.example.accessibility.sharepre.SharePreferenceUtils;
+import com.example.accessibility.sharepre.Type;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +48,7 @@ public class ActionInfo {
                 break;
             case StateConstant.INPUT_TEXT:
                 actionInfo.mResStr = "entry";
-                actionInfo.mExtra = "https://www.like.video/s/6607378458340811630?c=whatsapp&special=1&l=en";
+                actionInfo.mExtra = SharePreferenceUtils.get(SharePreferenceConstant.INPUT_TEXT_INFO, SharePreferenceConstant.DEFAULT_INPUT_TEXT, Type.STRING);
                 actionInfo.mActionType = ActionInfo.ACTION_INPUT;
                 break;
             case StateConstant.INIT_STATE:
@@ -65,9 +69,9 @@ public class ActionInfo {
             case StateConstant.SHOW_EXIT_DIALOG:
                 actionInfo.mNodeIndex = new int[]{0, 2};
                 break;
-            case StateConstant.GROUP_FULL:
+            case StateConstant.GROUP_FULL_OR_INVALID:
                 actionInfo.mActionType = ACTION_DETECT_CLICK;
-                actionInfo.mText = "您无法加入群组，群组已满。";
+                actionInfo.mText = "您无法加入群组";
                 actionInfo.mDetectActionInfo = new ActionInfo();
                 actionInfo.mDetectActionInfo.mActionType = ACTION_CLICK;
                 actionInfo.mDetectActionInfo.mResStr = "ok";

@@ -61,6 +61,9 @@ public class AccessibilityUtils {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private static AccessibilityNodeInfo findNodeInfo(AccessibilityService service, ActionInfo actionInfo) {
         AccessibilityNodeInfo nodeInfo = service.getRootInActiveWindow();
+        if(nodeInfo == null){
+            return null;
+        }
         String resPrefix = WhatsAppConstant.RES_PREFIX;
         if(!TextUtils.isEmpty(actionInfo.mResStr)){
             return findNodeInfosById(nodeInfo,resPrefix + actionInfo.mResStr);

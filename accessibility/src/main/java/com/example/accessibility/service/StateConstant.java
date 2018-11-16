@@ -13,6 +13,6 @@ public class StateConstant {
     public final static int EXIT_GROUP = SHOW_EXIT_DIALOG + 1;//退出群
     public static final int INIT_STATE = EXIT_GROUP + 1;//初始状态
     public static final int END_STATE = INIT_STATE + 1;//结束状态
-    public static final int GROUP_FULL = END_STATE + 1;//群满操作，点击确定消失弹窗
-    public static final int ONLY_MANAGER_SEND_MSG = GROUP_FULL + 1;//只有管理员发送消息
+    public static final int GROUP_FULL_OR_INVALID = END_STATE + 1;//群满操作，点击确定消失弹窗  群链接被取消，无法加群 例如https://chat.whatsapp.com/KwKkanzkw5aHZ6cv9S917Y
+    public static final int ONLY_MANAGER_SEND_MSG = GROUP_FULL_OR_INVALID + 1;//只有管理员发送消息
 }

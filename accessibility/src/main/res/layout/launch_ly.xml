@@ -59,13 +59,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <TextView
+        android:layout_below="@+id/history_tips"
+        android:id="@+id/input_text_tips"
+        android:text="输入要发送的文案："
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:text="@string/default_string"
+        android:layout_below="@+id/input_text_tips"
+        android:layout_width="match_parent"
+        android:id="@+id/input_text"
+        android:layout_height="wrap_content"/>
+
     <Button
         android:text="开启服务"
         android:visibility="gone"
         android:id="@+id/start_service"
         android:layout_marginTop="100dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/history_tips"
+        android:layout_below="@id/input_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <TextView
