@@ -80,6 +80,13 @@ public class ActionInfo {
                 actionInfo.mActionType = ACTION_DETECT;
                 actionInfo.mResStr = "read_only_chat_info";
                 break;
+            case StateConstant.NO_CAMERA_DIALOG:
+                actionInfo.mActionType = ACTION_DETECT_CLICK;
+                actionInfo.mText = "无法打开相机";
+                actionInfo.mDetectActionInfo = new ActionInfo();
+                actionInfo.mDetectActionInfo.mActionType = ACTION_CLICK;
+                actionInfo.mDetectActionInfo.mText = "确定";
+                break;
             default:
                 break;
 

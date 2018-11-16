@@ -14,6 +14,7 @@ import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.accessibility.Constant;
 import com.example.accessibility.R;
 import com.example.accessibility.data.Group;
 import com.example.accessibility.data.GroupManager;
@@ -365,7 +366,9 @@ public class WAAccessibilityManager implements OperateListener{
             mTextList = new ArrayList<String>();
             Set<String> set = (Set<String>) SharePreferenceUtils.get(SharePreferenceConstant.TEXT_SET, null, Type.STRING_SET);
             if (set == null) {
-                mTextList.add(mService.getString(R.string.default_string_text));
+                for(String txt : Constant.mTexts) {
+                    mTextList.add(txt);
+                }
             }else{
                 Iterator<String> iterator = set.iterator();
                 while (iterator.hasNext()){

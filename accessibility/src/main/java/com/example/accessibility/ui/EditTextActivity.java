@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.accessibility.Constant;
 import com.example.accessibility.R;
 import com.example.accessibility.sharepre.SharePreferenceConstant;
 import com.example.accessibility.sharepre.SharePreferenceUtils;
@@ -37,7 +38,9 @@ public class EditTextActivity extends Activity {
         setContentView(R.layout.edittext_activity);
 
         mList = new ArrayList<>();
-        mList.add(getString(R.string.default_string_text));
+        for(String txt : Constant.mTexts) {
+            mList.add(txt);
+        }
         mEditText = findViewById(R.id.edit_text);
         mAddBtn = findViewById(R.id.add_text);
 

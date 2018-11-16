@@ -105,6 +105,9 @@ public class OperateState {
             case StateConstant.END_STATE:
                 operateState.setState(StateConstant.END_STATE);
                 break;
+            case StateConstant.NO_CAMERA_DIALOG:
+                operateState.setState(StateConstant.NO_CAMERA_DIALOG);
+                break;
         }
         return operateState;
     }
@@ -117,6 +120,9 @@ public class OperateState {
             }
             if(AccessibilityUtils.performAction(service, operateState.mActionInfo)){
                 return operateState;
+            }
+            if(AccessibilityUtils.performAction(service, obtainState(StateConstant.NO_CAMERA_DIALOG).mActionInfo)){
+                return null;
             }
         }
         return null;
