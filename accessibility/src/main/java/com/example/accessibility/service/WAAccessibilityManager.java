@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -24,12 +25,17 @@ import com.example.accessibility.time.Time;
 import com.example.accessibility.time.TimeChageReceiver;
 import com.example.accessibility.time.TimeUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.logging.SocketHandler;
+
 public class WAAccessibilityManager implements OperateListener{
     public static final int UNIT_OPERATE_DURATION = 400;
     public static final int SEND_MSG_OPERATE_DURATION = 6000;
     public static final String WA_ACCESSIBILITY_SERVICE = "com.example.accessibility/WAAccessibilityService";
     public static final int OPERATE_ERROR_COUNT = 5;
-    private final Handler mHandler;
+    private Handler mHandler;
     private OperateState mState;
     private String TAG = "AcessibilityManager";
     private boolean mWorkable = false;
@@ -49,6 +55,8 @@ public class WAAccessibilityManager implements OperateListener{
     private Group mCurrGroup;
     private int mOperateErrorCount = 0;
     private long mLastPerfomTime;
+    private int mGoupFullCount = 0;
+    private int mOnlyMangerSendMsgCount = 0;
 
     public static WAAccessibilityManager getInstance() {
         if(sManager == null){
@@ -66,17 +74,7 @@ public class WAAccessibilityManager implements OperateListener{
     }
 
     private WAAccessibilityManager() {
-        mHandlerThread = new HandlerThread("TaskThread");
-        mHandlerThread.start();
-        mHandler = new Handler(mHandlerThread.getLooper()){
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-            @Override
-            public void handleMessage(Message msg) {
-                if(mWorkable){
-                    work();
-                }
-            }
-        };
+
     }
 
 
@@ -126,12 +124,8 @@ public class WAAccessibilityManager implements OperateListener{
     }
 
     public void start(){
-        if(mWorkStarted || mWorkable){
-            return;
-        }else {
-            mWorkStarted = true;
-            mWorkable = true;
-        }
+        mWorkStarted = true;
+        mWorkable = true;
         mNeddReStartForNextWindowChanged = false;
         start(StateConstant.INIT_STATE);
     }
@@ -147,9 +141,24 @@ public class WAAccessibilityManager implements OperateListener{
 
     public void setService(WAAccessibilityService WAAccessibilityService) {
         mService = WAAccessibilityService;
-//        checkStartWhatsApp();
+
+        setHandler();
         registerTimeReceiver();
-        startWhatsApp();
+        checkStartWhatsApp();
+    }
+
+    private void setHandler() {
+        mHandlerThread = new HandlerThread("TaskThread");
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper()){
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @Override
+            public void handleMessage(Message msg) {
+                if(mWorkable){
+                    work();
+                }
+            }
+        };
     }
 
     private void registerTimeReceiver() {
@@ -170,6 +179,7 @@ public class WAAccessibilityManager implements OperateListener{
         OperateState state = mState.hitNext(mService);
         if(state != null){
             mState = state;
+            statisErrorState();
             Log.i(TAG, "work state=" + mState.getStateStr());
             mState.initNextHitState();
             hadWork = true;
@@ -186,6 +196,20 @@ public class WAAccessibilityManager implements OperateListener{
         }
 
         return hadWork;
+    }
+
+    private void statisErrorState() {
+        if(mState.getState() == StateConstant.GROUP_FULL){
+            int count = (int) SharePreferenceUtils.get(SharePreferenceConstant.GROUP_FULL_COUNT, 0, Type.INTEGER);
+            count++;
+            SharePreferenceUtils.put(SharePreferenceConstant.GROUP_FULL_COUNT, count, Type.INTEGER);
+            mGoupFullCount++;
+        }else if(mState.getState() == StateConstant.ONLY_MANAGER_SEND_MSG){
+            int count = (int) SharePreferenceUtils.get(SharePreferenceConstant.ONLY_MANAGER_SEND_MSG, 0, Type.INTEGER);
+            count++;
+            SharePreferenceUtils.put(SharePreferenceConstant.ONLY_MANAGER_SEND_MSG, count, Type.INTEGER);
+            mOnlyMangerSendMsgCount++;
+        }
     }
 
     public void reset() {
@@ -213,8 +237,12 @@ public class WAAccessibilityManager implements OperateListener{
         mNeddReStartForNextWindowChanged = true;
         Intent intent = new Intent(Intent.ACTION_VIEW);
         mCurrGroup = GroupManager.getInstance().obtainGroup();
+        if(mCurrGroup == null){
+            Log.i(TAG, "group null-----");
+            return;
+        }
         Log.i(TAG, "startGroupLink:" + mCurrGroup.toString());
-        intent.setData(Uri.parse("https://chat.whatsapp.com/invite/1hzPJg6JbIW17UGmHUCwzc"));
+        intent.setData(Uri.parse(mCurrGroup.mGroupLink));
         intent.setComponent(new ComponentName(WhatsAppConstant.WHATSAPP, WhatsAppConstant.WHATSAPP_HOME_ACTIVITY));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         mService.startActivity(intent);
@@ -264,6 +292,22 @@ public class WAAccessibilityManager implements OperateListener{
         mOperateCount++;
         if(isOperateContinue()) {
             startWhatsApp(1000);
+        }else{
+            ThreadUtils.runOnBackgroundThread(new Runnable() {
+                @Override
+                public void run() {
+                    int lastStart = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_START, 0, Type.INTEGER);
+                    int lastEnd = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_END, 0, Type.INTEGER);
+                    String str = "lastStart=" + lastStart + " lastEnd=" + lastEnd + " groupFull=" + mGoupFullCount + " onlyManagerSendMsg=" + mOnlyMangerSendMsgCount;
+                    try {
+                        FileOutputStream fileOutputStream = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "access.whatsapp/"+ System.currentTimeMillis() + " .txt");
+                        fileOutputStream.write(str.getBytes());
+                        fileOutputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 
@@ -272,21 +316,21 @@ public class WAAccessibilityManager implements OperateListener{
             @Override
             public void run() {
                 Time time = TimeUtils.getCurrTime();
-                if(time.mHour != mOperateTime){
-                    return;
-                }
-                String lastTimeStr = (String) SharePreferenceUtils.get(SharePreferenceConstant.LAST_START_OPERATE_TIME, "", Type.STRING);
-                boolean needStart = false;
-                if(TextUtils.isEmpty(lastTimeStr)){
-                   needStart = true;
-                   Log.i(TAG, "never start---and need start");
-                }else{
-                    Time lastTime = Time.parseFromSharePreferenceStr(lastTimeStr);
-                    if(time.mDay != lastTime.mDay){
-                        needStart = true;
-                        Log.i(TAG, "had start---and need start lastStart=" + lastTime.toString());
-                    }
-                }
+//                if(time.mHour != mOperateTime){
+//                    return;
+//                }
+//                String lastTimeStr = (String) SharePreferenceUtils.get(SharePreferenceConstant.LAST_START_OPERATE_TIME, "", Type.STRING);
+                boolean needStart = true;
+//                if(TextUtils.isEmpty(lastTimeStr)){
+//                   needStart = true;
+//                   Log.i(TAG, "never start---and need start");
+//                }else{
+//                    Time lastTime = Time.parseFromSharePreferenceStr(lastTimeStr);
+//                    if(time.mDay != lastTime.mDay){
+//                        needStart = true;
+//                        Log.i(TAG, "had start---and need start lastStart=" + lastTime.toString());
+//                    }
+//                }
                 if(needStart){
                     startWhatsApp(500);
                 }

@@ -3,6 +3,7 @@ package com.example.accessibility.data;
 import android.os.Environment;
 import android.util.Log;
 
+import com.example.accessibility.data.db.DBHelper;
 import com.example.accessibility.data.excel.ExcelHelper;
 import com.example.accessibility.data.excel.ExcelInfo;
 import com.example.accessibility.thread.ThreadUtils;
@@ -36,49 +37,25 @@ public class GroupManager {
         return sManager;
     }
 
-    public void updateInfo(int sheetIndex, int maxRead, int startIndex){
-        mSheedIndex = sheetIndex;
-        mStartIndex = startIndex;
-        mMaxRead = maxRead;
-        if(mNumPerRead > mMaxRead){
-            mNumPerRead = mMaxRead;
-        }
-        mGroups.clear();
-        loadData();
-    }
 
     private GroupManager() {
         mExcelPath = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "access.whatsapp" + File.separator + "group.xls";
     }
 
-    public void init(){
-        ThreadUtils.runOnBackgroundThread(new Runnable() {
-            @Override
-            public void run() {
-                mExcelInfo = ExcelHelper.getExcelInfo(mExcelPath);
-                Log.i(TAG, "excelInfo::" + mExcelInfo.toString());
-            }
-        });
-    }
-
-    public void loadData(){
-        ThreadUtils.runOnBackgroundThread(new Runnable() {
-            @Override
-            public void run() {
-                List<Group> groups = ExcelHelper.loadGroups(mExcelPath, mSheedIndex, mStartIndex, mNumPerRead);
-                mStartIndex = (mStartIndex + groups.size()) % mExcelInfo.getSheetInfo(mSheedIndex).mRows;
-                mGroups.addAll(groups);
-                mReadCount += groups.size();
-                Log.i(TAG, groups.toString());
-            }
-        });
+    public int loadData(int start, int end){
+        long timeStart = System.currentTimeMillis();
+        List<Group> groups = DBHelper.getInstance().query(start, end);
+        mGroups.addAll(groups);
+        mReadCount += groups.size();
+        Log.i(TAG,  "load group size---" + mGroups.size() + " costTime=" + (System.currentTimeMillis() - timeStart));
+        return mGroups.size();
     }
 
     public Group obtainGroup() {
-        mLastGroup = mGroups.remove(0);
-        if(mGroups.size() <= MIN_GROUP_SIZE && mReadCount < mMaxRead){
-            loadData();
+        if(mGroups.size() == 0){
+            return null;
         }
+        mLastGroup = mGroups.remove(0);
         return mLastGroup;
     }
 }

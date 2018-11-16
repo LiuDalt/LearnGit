@@ -17,7 +17,7 @@ public class TimeChageReceiver extends BroadcastReceiver{
                 //系统时间修改
             case Intent.ACTION_TIMEZONE_CHANGED://系统时区变化
                 Log.i("TimeChageReceiver", "TimeChageReceiver=" + intent.getAction());
-                WAAccessibilityManager.getInstance().checkStartWhatsApp();
+//                WAAccessibilityManager.getInstance().checkStartWhatsApp();
                 break;
         }
     }

@@ -28,8 +28,8 @@ public class ExcelHelper {
             for (int i = startIndex; i < maxIndex; i++) {
                 Group group = new Group();
                 group.mGroupLink = sheet.getCell(0, i % sheetRows).getContents();
-                group.mRowIndex = i % sheetRows;
-                group.mSheetIndex = sheetIndex;
+//                group.mRowIndex = i % sheetRows;
+//                group.mSheetIndex = sheetIndex;
                 group.mCountry = sheet.getCell(1, i % sheetRows).getContents();
                 groups.add(group);
             }

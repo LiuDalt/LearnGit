@@ -15,7 +15,7 @@ public class AccessibilityApplication extends Application {
 
         sContext = this;
         SharePreferenceUtils.init(this);
-        GroupManager.getInstance().init();
+//        GroupManager.getInstance().init();
 
     }
 }

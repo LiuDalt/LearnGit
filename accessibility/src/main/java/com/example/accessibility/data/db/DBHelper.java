@@ -9,19 +9,30 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.accessibility.application.AccessibilityApplication;
+import com.example.accessibility.data.Group;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     private static String DB_PATH = "/data" + Environment.getDataDirectory().getAbsolutePath() + "/" + AccessibilityApplication.sContext.getPackageName() + "/" + "ws_db.db";
+    private static String TABLE_NAME = "ws_group";
 
 
-    private static DBHelper sDBHelper = new DBHelper(AccessibilityApplication.sContext, "ws_db.db", null, 1);
+    private static DBHelper sDBHelper;
 
     public static DBHelper getInstance() {
+        if(sDBHelper == null){
+            synchronized (DBHelper.class){
+                if(sDBHelper == null){
+                    sDBHelper = new DBHelper(AccessibilityApplication.sContext, DB_PATH, null, 1);
+                }
+            }
+        }
         return sDBHelper;
     }
 
@@ -33,17 +44,32 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, name, factory, version, errorHandler);
     }
 
-    public static void query(){
+    public List<Group> query(int start, int end){
+        List<Group> list = new ArrayList<>();
         try {
-            SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(DB_PATH, null);
-            Cursor cursor = db.rawQuery("select * from ws_group where id < 5", null);
+            SQLiteDatabase db = sDBHelper.getReadableDatabase();
+            Cursor cursor = db.query(TABLE_NAME, new String[] { "id", "url" }, "id>= ? and id < ?",
+                    new String[] { String.valueOf(start), String.valueOf(end) }, null, null, null);
             while (cursor.moveToNext()){
-                Log.i(TAG, "id=" + cursor.getInt(cursor.getColumnIndex("id")) + " uri=" + cursor.getString(cursor.getColumnIndex("url")));
+                Group group = new Group();
+                group.mId = cursor.getInt(cursor.getColumnIndex("id"));
+                group.mGroupLink = cursor.getString(cursor.getColumnIndex("url"));
+                list.add(group);
             }
+            cursor.close();
         }catch (Exception e){
             Log.i(TAG, "" + e);
         }
+        return list;
+    }
 
+    public int getCount(){
+        String sql = "select count(*) from " + TABLE_NAME;
+        Cursor cursor = getReadableDatabase().rawQuery(sql, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
     }
 
     public static boolean copyDBFromFile(){

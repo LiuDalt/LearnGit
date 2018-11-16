@@ -71,9 +71,11 @@ public class ActionInfo {
                 actionInfo.mDetectActionInfo = new ActionInfo();
                 actionInfo.mDetectActionInfo.mActionType = ACTION_CLICK;
                 actionInfo.mDetectActionInfo.mResStr = "ok";
+                break;
             case StateConstant.ONLY_MANAGER_SEND_MSG:
                 actionInfo.mActionType = ACTION_DETECT;
                 actionInfo.mResStr = "read_only_chat_info";
+                break;
             default:
                 break;
 
