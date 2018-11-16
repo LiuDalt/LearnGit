@@ -130,7 +130,8 @@ public class MainActivity extends Activity {
         int lastEnd = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_END, 0, Type.INTEGER);
         int groupFull = (int) SharePreferenceUtils.get(SharePreferenceConstant.GROUP_FULL_COUNT, 0, Type.INTEGER);
         int onlyManagerSend = (int) SharePreferenceUtils.get(SharePreferenceConstant.ONLY_MANAGER_SEND_MSG, 0, Type.INTEGER);
-        String str = "lastStart=" + lastStart + " lastEnd=" + lastEnd + " groupFull=" + groupFull + " onlyManagerSendMsg=" + onlyManagerSend;
+        int operateCount = (int) SharePreferenceUtils.get(SharePreferenceConstant.OPREATE_COUNT, 0, Type.INTEGER);
+        String str = "lastStart=" + lastStart + " lastEnd=" + lastEnd + " groupFull=" + groupFull + " onlyManagerSendMsg=" + onlyManagerSend + " operateCount=" + operateCount;
         mHistoryTips.setText(str);
     }
 }

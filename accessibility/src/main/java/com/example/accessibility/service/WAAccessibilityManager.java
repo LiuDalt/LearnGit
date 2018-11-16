@@ -35,7 +35,7 @@ import java.util.Set;
 
 public class WAAccessibilityManager implements OperateListener{
     public static final int UNIT_OPERATE_DURATION = 500;
-    public static final int SEND_MSG_OPERATE_DURATION = 2000;
+    public static final int SEND_MSG_OPERATE_DURATION = 5000;
     public static final String WA_ACCESSIBILITY_SERVICE = "com.example.accessibility/WAAccessibilityService";
     public static final int OPERATE_ERROR_COUNT = 5;
     private Handler mHandler;
@@ -149,7 +149,7 @@ public class WAAccessibilityManager implements OperateListener{
         setHandler();
         registerTimeReceiver();
         checkStartWhatsApp();
-        startHeartBeat();
+//        startHeartBeat();
     }
 
     private void startHeartBeat() {
@@ -230,6 +230,7 @@ public class WAAccessibilityManager implements OperateListener{
             SharePreferenceUtils.put(SharePreferenceConstant.ONLY_MANAGER_SEND_MSG, count, Type.INTEGER);
             mOnlyMangerSendMsgCount++;
         }
+        SharePreferenceUtils.put(SharePreferenceConstant.OPREATE_COUNT, mOperateCount, Type.INTEGER);
     }
 
     public void reset() {
