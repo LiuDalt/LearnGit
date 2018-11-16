@@ -48,7 +48,7 @@ public class ActionInfo {
                 break;
             case StateConstant.INPUT_TEXT:
                 actionInfo.mResStr = "entry";
-                actionInfo.mExtra = SharePreferenceUtils.get(SharePreferenceConstant.INPUT_TEXT_INFO, SharePreferenceConstant.DEFAULT_INPUT_TEXT, Type.STRING);
+                actionInfo.mExtra = WAAccessibilityManager.getInstance().getInputText();
                 actionInfo.mActionType = ActionInfo.ACTION_INPUT;
                 break;
             case StateConstant.INIT_STATE:

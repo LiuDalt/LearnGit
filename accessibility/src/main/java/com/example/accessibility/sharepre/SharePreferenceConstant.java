@@ -8,4 +8,5 @@ public class SharePreferenceConstant {
     public static final String LAST_END = "last_end";
     public static final String DEFAULT_INPUT_TEXT = "I saw a super hot and sexy mixed-race girl. Do you know her? I want her contact. https://bggray-mobile.like.video/s/6607378458340811630?c=whatsapp&special=1&l=en";
     public static final String INPUT_TEXT_INFO = "input_text_info";
+    public static final String TEXT_SET = "text_set";
 }

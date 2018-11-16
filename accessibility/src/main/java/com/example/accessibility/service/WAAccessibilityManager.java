@@ -14,6 +14,7 @@ import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.example.accessibility.R;
 import com.example.accessibility.data.Group;
 import com.example.accessibility.data.GroupManager;
 import com.example.accessibility.io.FileCounstant;
@@ -25,6 +26,11 @@ import com.example.accessibility.thread.ThreadUtils;
 import com.example.accessibility.time.Time;
 import com.example.accessibility.time.TimeChageReceiver;
 import com.example.accessibility.time.TimeUtils;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.Set;
 
 public class WAAccessibilityManager implements OperateListener{
     public static final int UNIT_OPERATE_DURATION = 500;
@@ -54,6 +60,7 @@ public class WAAccessibilityManager implements OperateListener{
     private int mGoupFullCount = 0;
     private int mOnlyMangerSendMsgCount = 0;
     private Runnable mHeartRunnable;
+    private ArrayList<String> mTextList;
 
     public static WAAccessibilityManager getInstance() {
         if(sManager == null){
@@ -351,5 +358,26 @@ public class WAAccessibilityManager implements OperateListener{
                 }
             }
         });
+    }
+
+    public String getInputText() {
+        if(mTextList == null) {
+            mTextList = new ArrayList<String>();
+            Set<String> set = (Set<String>) SharePreferenceUtils.get(SharePreferenceConstant.TEXT_SET, null, Type.STRING_SET);
+            if (set == null) {
+                mTextList.add(mService.getString(R.string.default_string_text));
+            }else{
+                Iterator<String> iterator = set.iterator();
+                while (iterator.hasNext()){
+                    mTextList.add(iterator.next());
+                }
+            }
+
+        }
+        Random random = new Random();
+        if(mTextList.size() > 1) {
+           return mTextList.get(Math.abs(random.nextInt(100) % mTextList.size()));
+        }
+        return mTextList.get(0);
     }
 }

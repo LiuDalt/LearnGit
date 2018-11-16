@@ -1,6 +1,7 @@
 package com.example.accessibility.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.TextureView;
@@ -28,7 +29,6 @@ public class MainActivity extends Activity {
     private View mStartService;
     private int mGroupSize;
     private TextView mHistoryTips;
-    private EditText mInputText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +48,18 @@ public class MainActivity extends Activity {
         mMaxTips = findViewById(R.id.max_tips);
         mStartService = findViewById(R.id.start_service);
         mHistoryTips = findViewById(R.id.history_tips);
-        mInputText = findViewById(R.id.input_text);
+
+        findViewById(R.id.input_text_tips).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EditTextActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mStartService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!TextUtils.isEmpty(mInputText.getText().toString())) {
-                    SharePreferenceUtils.put(SharePreferenceConstant.INPUT_TEXT_INFO, mInputText.getText().toString(), Type.STRING);
-                }
                 WAAccessibilityManager.getInstance().updateInfo(mGroupSize, WhatsAppConstant.OPERATE_TIME_DEFAULT);
                 WAAccessibilityManager.getInstance().openService(MainActivity.this);
             }
