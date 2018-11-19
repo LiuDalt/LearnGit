@@ -34,8 +34,6 @@ public class AccessibilityUtils {
             return performInput(service, targetNode, actionInfo);
         }
 
-
-
         return false;
     }
 

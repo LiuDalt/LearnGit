@@ -48,12 +48,60 @@ public class OperateState {
             hitStates.add(obtainState(StateConstant.GROUP_FULL_OR_INVALID));
             hitStates.add(obtainState(StateConstant.INPUT_TEXT));
             hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
+            hitStates.add(obtainState(StateConstant.JOIN_GROUP));
+        }else if(state == StateConstant.GROUP_FULL_OR_INVALID){
+            hitStates.add(obtainState(StateConstant.END_STATE));
+        }else if(state == StateConstant.INPUT_TEXT){
+            hitStates.add(obtainState(StateConstant.SEND_MSG));
+            hitStates.add(obtainState(StateConstant.INPUT_TEXT));
+        }else if(state == StateConstant.SEND_MSG){
+            hitStates.add(obtainState(StateConstant.ALREADY_MSG_SENDED));
+            hitStates.add(obtainState(StateConstant.SEND_MSG));
+        }else if(state == StateConstant.SHOW_GROUP_MENU){
+            hitStates.add(obtainState(StateConstant.SHOW_MORE_MENU));
+            hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
+        }else if(state == StateConstant.SHOW_MORE_MENU){
+            hitStates.add(obtainState(StateConstant.SHOW_EXIT_DIALOG));
+            hitStates.add(obtainState(StateConstant.SHOW_MORE_MENU));
+        }else if(state == StateConstant.SHOW_EXIT_DIALOG){
+            hitStates.add(obtainState(StateConstant.EXIT_GROUP));
+            hitStates.add(obtainState(StateConstant.SHOW_EXIT_DIALOG));
+        } else if(state == StateConstant.EXIT_GROUP){
+            hitStates.add(obtainState(StateConstant.END_STATE));
+            hitStates.add(obtainState(StateConstant.EXIT_GROUP));
+        } else if(state == StateConstant.ONLY_MANAGER_SEND_MSG){
+            hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
+            hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
+        }else if(state == StateConstant.ALREADY_MSG_SENDED){
+            hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
+        }
+        return hitStates;
+    }
+
+    /**
+     *END_STATE 和其他STATE不能同时出现，所以包含END_STATE的nextStateList只能有一个
+     * @param state
+     * @return
+     */
+    public static List<OperateState> obtainNextHitStateNoExitForSend(int state) {
+        List<OperateState> hitStates = new ArrayList<>();
+        if(state == StateConstant.INIT_STATE){
+            hitStates.add(obtainState(StateConstant.JOIN_GROUP));
+            hitStates.add(obtainState(StateConstant.INPUT_TEXT));
+            hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
+            hitStates.add(obtainState(StateConstant.GROUP_FULL_OR_INVALID));
+        }else if(state == StateConstant.JOIN_GROUP){
+            hitStates.add(obtainState(StateConstant.GROUP_FULL_OR_INVALID));
+            hitStates.add(obtainState(StateConstant.INPUT_TEXT));
+            hitStates.add(obtainState(StateConstant.ONLY_MANAGER_SEND_MSG));
+            hitStates.add(obtainState(StateConstant.JOIN_GROUP));
         }else if(state == StateConstant.GROUP_FULL_OR_INVALID){
             hitStates.add(obtainState(StateConstant.END_STATE));
         }else if(state == StateConstant.INPUT_TEXT){
             hitStates.add(obtainState(StateConstant.SEND_MSG));
         }else if(state == StateConstant.SEND_MSG){
-            hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
+//            hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
+            hitStates.add(obtainState(StateConstant.END_STATE));
         }else if(state == StateConstant.SHOW_GROUP_MENU){
             hitStates.add(obtainState(StateConstant.SHOW_MORE_MENU));
         }else if(state == StateConstant.SHOW_MORE_MENU){
@@ -70,45 +118,49 @@ public class OperateState {
 
     private static OperateState obtainState(int state) {
         OperateState operateState = new OperateState();
-        switch (state){
-            case StateConstant.INIT_STATE:
-                operateState.setState(StateConstant.INIT_STATE);
-                break;
-            case StateConstant.JOIN_GROUP:
-                operateState.setState(StateConstant.JOIN_GROUP);
-                break;
-            case StateConstant.INPUT_TEXT:
-                operateState.setState(StateConstant.INPUT_TEXT);
-                break;
-            case StateConstant.GROUP_FULL_OR_INVALID:
-                operateState.setState(StateConstant.GROUP_FULL_OR_INVALID);
-                break;
-            case StateConstant.SEND_MSG:
-                operateState.setDuraiton(WAAccessibilityManager.SEND_MSG_OPERATE_DURATION);
-                operateState.setState(StateConstant.SEND_MSG);
-                break;
-            case StateConstant.SHOW_GROUP_MENU:
-                operateState.setState(StateConstant.SHOW_GROUP_MENU);
-                break;
-            case StateConstant.SHOW_MORE_MENU:
-                operateState.setState(StateConstant.SHOW_MORE_MENU);
-                break;
-            case StateConstant.SHOW_EXIT_DIALOG:
-                operateState.setState(StateConstant.SHOW_EXIT_DIALOG);
-                break;
-            case StateConstant.EXIT_GROUP:
-                operateState.setState(StateConstant.EXIT_GROUP);
-                break;
-            case StateConstant.ONLY_MANAGER_SEND_MSG:
-                operateState.setState(StateConstant.ONLY_MANAGER_SEND_MSG);
-                break;
-            case StateConstant.END_STATE:
-                operateState.setState(StateConstant.END_STATE);
-                break;
-            case StateConstant.NO_CAMERA_DIALOG:
-                operateState.setState(StateConstant.NO_CAMERA_DIALOG);
-                break;
-        }
+        operateState.setState(state);
+//        switch (state){
+//            case StateConstant.INIT_STATE:
+//                operateState.setState(StateConstant.INIT_STATE);
+//                break;
+//            case StateConstant.JOIN_GROUP:
+//                operateState.setState(StateConstant.JOIN_GROUP);
+//                break;
+//            case StateConstant.INPUT_TEXT:
+//                operateState.setState(StateConstant.INPUT_TEXT);
+//                break;
+//            case StateConstant.GROUP_FULL_OR_INVALID:
+//                operateState.setState(StateConstant.GROUP_FULL_OR_INVALID);
+//                break;
+//            case StateConstant.SEND_MSG:
+//                operateState.setDuraiton(WAAccessibilityManager.SEND_MSG_OPERATE_DURATION);
+//                operateState.setState(StateConstant.SEND_MSG);
+//                break;
+//            case StateConstant.SHOW_GROUP_MENU:
+//                operateState.setState(StateConstant.SHOW_GROUP_MENU);
+//                break;
+//            case StateConstant.SHOW_MORE_MENU:
+//                operateState.setState(StateConstant.SHOW_MORE_MENU);
+//                break;
+//            case StateConstant.SHOW_EXIT_DIALOG:
+//                operateState.setState(StateConstant.SHOW_EXIT_DIALOG);
+//                break;
+//            case StateConstant.EXIT_GROUP:
+//                operateState.setState(StateConstant.EXIT_GROUP);
+//                break;
+//            case StateConstant.ONLY_MANAGER_SEND_MSG:
+//                operateState.setState(StateConstant.ONLY_MANAGER_SEND_MSG);
+//                break;
+//            case StateConstant.END_STATE:
+//                operateState.setState(StateConstant.END_STATE);
+//                break;
+//            case StateConstant.NO_CAMERA_DIALOG:
+//                operateState.setState(StateConstant.NO_CAMERA_DIALOG);
+//                break;
+//            case StateConstant.ALREADY_MSG_SENDED:
+//                operateState.setState(StateConstant.ALREADY_MSG_SENDED);
+//                break;
+//        }
         return operateState;
     }
 

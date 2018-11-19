@@ -87,6 +87,10 @@ public class ActionInfo {
                 actionInfo.mDetectActionInfo.mActionType = ACTION_CLICK;
                 actionInfo.mDetectActionInfo.mText = "确定";
                 break;
+            case StateConstant.ALREADY_MSG_SENDED:
+                actionInfo.mResStr = "forward";
+                actionInfo.mActionType = ACTION_DETECT;
+                break;
             default:
                 break;
 

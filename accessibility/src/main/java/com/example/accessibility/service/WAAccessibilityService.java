@@ -78,10 +78,10 @@ public class WAAccessibilityService extends AccessibilityService {
         }
         eventText = eventText + ":" + eventType;
         Log.i(TAG, eventText);
-        if(event.getEventType() ==  AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED &&
-                WAAccessibilityManager.getInstance().isNeddReStartForNextWindowChanged()){
-            WAAccessibilityManager.getInstance().start();
-        }
+//        if(event.getEventType() ==  AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED &&
+//                WAAccessibilityManager.getInstance().isNeddReStartForNextWindowChanged()){
+//            WAAccessibilityManager.getInstance().start();
+//        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)

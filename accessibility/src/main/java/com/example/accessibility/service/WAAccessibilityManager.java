@@ -34,10 +34,9 @@ import java.util.Random;
 import java.util.Set;
 
 public class WAAccessibilityManager implements OperateListener{
-    public static final int UNIT_OPERATE_DURATION = 500;
-    public static final int SEND_MSG_OPERATE_DURATION = 5000;
+    public static final int UNIT_OPERATE_DURATION = 400;
+    public static final int SEND_MSG_OPERATE_DURATION = 3000;
     public static final String WA_ACCESSIBILITY_SERVICE = "com.example.accessibility/WAAccessibilityService";
-    public static final int OPERATE_ERROR_COUNT = 5;
     private Handler mHandler;
     private OperateState mState;
     private String TAG = "AcessibilityManager";
@@ -50,7 +49,7 @@ public class WAAccessibilityManager implements OperateListener{
     private int mNumPerSend;
     private long mOperateTime;//每天发消息的时间
     private int mOperateCount = 0;
-    private boolean mNeddReStartForNextWindowChanged = false;
+    private boolean mNeddReStartForNextWindowChanged = true;
     private Runnable mOperateRunnable;
     private TimeChageReceiver mTimeReceiver;
     private boolean mHadOperateToday = false;
@@ -248,6 +247,7 @@ public class WAAccessibilityManager implements OperateListener{
         mHandler.removeCallbacks(mOperateRunnable);
         mHandlerThread.quitSafely();
         mService.unregisterReceiver(mTimeReceiver);
+        mNeddReStartForNextWindowChanged = true;
 
     }
 
@@ -255,12 +255,13 @@ public class WAAccessibilityManager implements OperateListener{
         if(mService == null){
             return;
         }
-        mNeddReStartForNextWindowChanged = true;
+        mNeddReStartForNextWindowChanged = false;
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(mCurrGroup.mGroupLink));
         intent.setComponent(new ComponentName(WhatsAppConstant.WHATSAPP, WhatsAppConstant.WHATSAPP_HOME_ACTIVITY));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP |Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         mService.startActivity(intent);
+        start();
     }
 
     public void startWhatsApp(final int delay, final boolean needReObtainData) {
@@ -327,7 +328,7 @@ public class WAAccessibilityManager implements OperateListener{
                 public void run() {
                     int lastStart = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_START, 0, Type.INTEGER);
                     int lastEnd = (int) SharePreferenceUtils.get(SharePreferenceConstant.LAST_END, 0, Type.INTEGER);
-                    String str = "lastStart=" + lastStart + " lastEnd=" + lastEnd + " groupFull=" + mGoupFullCount + " onlyManagerSendMsg=" + mOnlyMangerSendMsgCount;
+                    String str = "lastStart=" + lastStart + " lastEnd=" + lastEnd + " groupFull=" + mGoupFullCount + " onlyManagerSendMsg=" + mOnlyMangerSendMsgCount + " operateCount=" + mOperateCount;
                     Log.i(TAG, "operateStatis= " + str);
                     FileUtils.write(str, FileCounstant.getExternalFileDir() + TimeUtils.getCurrTime().toSharePreferenceStr() + " .txt");
                 }

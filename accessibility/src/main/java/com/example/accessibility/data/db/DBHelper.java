@@ -22,6 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TAG = "DBHelper";
     private static String DB_PATH = "/data" + Environment.getDataDirectory().getAbsolutePath() + "/" + AccessibilityApplication.sContext.getPackageName() + "/" + "ws_db.db";
     private static String TABLE_NAME = "ws_group";
+    private static int mCurrId;
 
 
     private static DBHelper sDBHelper;
@@ -43,6 +44,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
+    }
+
+    public List<Group> queryGroup(int start,int length){
+        return query(start, start + length);
     }
 
     public List<Group> query(int start, int end){

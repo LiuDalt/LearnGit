@@ -19,6 +19,7 @@ import com.example.accessibility.sharepre.SharePreferenceUtils;
 import com.example.accessibility.sharepre.Type;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,10 +38,7 @@ public class EditTextActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edittext_activity);
 
-        mList = new ArrayList<>();
-        for(String txt : Constant.mTexts) {
-            mList.add(txt);
-        }
+        initData();
         mEditText = findViewById(R.id.edit_text);
         mAddBtn = findViewById(R.id.add_text);
 
@@ -81,6 +79,22 @@ public class EditTextActivity extends Activity {
         mRecyclerView.setAdapter(mAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+    }
+
+    private void initData() {
+        mList = new ArrayList<>();
+        mList = new ArrayList<String>();
+        Set<String> set = (Set<String>) SharePreferenceUtils.get(SharePreferenceConstant.TEXT_SET, null, Type.STRING_SET);
+        if (set == null) {
+            for(String txt : Constant.mTexts) {
+                mList.add(txt);
+            }
+        }else{
+            Iterator<String> iterator = set.iterator();
+            while (iterator.hasNext()){
+                mList.add(iterator.next());
+            }
+        }
     }
 
     class TextAdapter extends RecyclerView.Adapter<TextItemHolder>{
