@@ -55,7 +55,7 @@ public class OperateState {
             hitStates.add(obtainState(StateConstant.SEND_MSG));
             hitStates.add(obtainState(StateConstant.INPUT_TEXT));
         }else if(state == StateConstant.SEND_MSG){
-            hitStates.add(obtainState(StateConstant.ALREADY_MSG_SENDED));
+            hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
             hitStates.add(obtainState(StateConstant.SEND_MSG));
         }else if(state == StateConstant.SHOW_GROUP_MENU){
             hitStates.add(obtainState(StateConstant.SHOW_MORE_MENU));
@@ -118,6 +118,9 @@ public class OperateState {
 
     private static OperateState obtainState(int state) {
         OperateState operateState = new OperateState();
+        if(state == StateConstant.SEND_MSG){
+            operateState.setDuraiton(WAAccessibilityManager.SEND_MSG_OPERATE_DURATION);
+        }
         operateState.setState(state);
 //        switch (state){
 //            case StateConstant.INIT_STATE:
