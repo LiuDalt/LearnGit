@@ -21,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -40,8 +41,10 @@ import com.example.administrator.font.FontActivity;
 import com.example.administrator.layoutopt.LayoutOptActivity;
 import com.example.administrator.mannotation.IdInject;
 import com.example.administrator.mannotation.IdInjectHelper;
+import com.example.administrator.marquee.MarqueeActivity;
 import com.example.administrator.myapplication.databinding.ItemLayoutBinding;
 import com.example.administrator.rooms.RoomActivity;
+import com.example.administrator.spannable.SpannableActivity;
 import com.example.administrator.transfer.TransferHepler;
 import com.example.learnmedia.CameraToMpegTest;
 import com.example.learnmedia.convert.ExtractDecodeEditEncodeMuxTest2;
@@ -164,6 +167,30 @@ public class MainActivity extends AppCompatActivity {
         testBottomSheetDialog();
 
         testDrawable();
+
+        testSpannable();
+
+        testMarquee();
+    }
+
+    private void testMarquee() {
+        findViewById(R.id.test_marquee).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MarqueeActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void testSpannable() {
+        findViewById(R.id.test_spannable).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SpannableActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void testDrawable() {

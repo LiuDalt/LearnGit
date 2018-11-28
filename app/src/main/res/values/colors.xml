@@ -6,4 +6,10 @@
     <color name="audio_wav_tip">#80ffffff</color>
     <color name="body_slim_bar_dot_bg">#ffffff</color>
     <color name="body_slim_bar_line_bg">#ff0000</color>
+
+    <color name="live_daily_rank_normal_tv_color">#FFE475</color>
+    <color name="live_daily_rank_normal_color">#4d000000</color>
+    <color name="live_daily_rank_marquee_start_corlor">#FFB20D</color>
+    <color name="live_daily_rank_marquee_end_corlor">#FF9200</color>
+    <color name="live_daily_marquee_tv_color">#FFFFFF</color>
 </resources>

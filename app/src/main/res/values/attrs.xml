@@ -11,4 +11,11 @@
             <enum name="circle" value="3"></enum>
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="LiveMarqueeTextView">
+        <attr name="marqueeTimesOnCreate" format="integer" ></attr>
+        <attr name="text" format="string"></attr>
+        <attr name="marqueeTextSize" format="dimension"></attr>
+        <attr name="marqueeTextColor" format="color"></attr>
+    </declare-styleable>
 </resources>

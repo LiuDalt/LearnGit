@@ -15,22 +15,33 @@
         android:textAllCaps="false"
         android:text="testRX"
         android:id="@+id/btn1"
-        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"/>
         <Button
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:id="@+id/test_record_video"
             android:text="录制"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/layout_opt"
             android:text="布局优化"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/animate_test"
             android:text="动画"
-            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/test_spannable"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:textAllCaps="false"
+            android:text="测试Spannable"
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
@@ -78,6 +89,12 @@
         android:id="@+id/test_drawable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/test_marquee"
+        android:text="测试跑马灯"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>
 
 

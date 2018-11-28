@@ -8,5 +8,9 @@
     <dimen name="body_slim_tv_size">13sp</dimen>
     <dimen name="body_slim_tv_top">7dp</dimen>
     <dimen name="slim_ic_margin">10dp</dimen>
-    <dimen name="sp18">18</dimen>
+    <dimen name="sp18">18sp</dimen>
+    <dimen name="live_daily_rank_normal_width">86dp</dimen>
+    <dimen name="live_daily_rank_normal_height">22dp</dimen>
+    <dimen name="sp11">11sp</dimen>
+    <dimen name="live_daily_rank_max_width">160dp</dimen>
 </resources>

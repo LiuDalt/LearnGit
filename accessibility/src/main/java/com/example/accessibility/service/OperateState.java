@@ -55,6 +55,7 @@ public class OperateState {
             hitStates.add(obtainState(StateConstant.SEND_MSG));
             hitStates.add(obtainState(StateConstant.INPUT_TEXT));
         }else if(state == StateConstant.SEND_MSG){
+            hitStates.add(obtainState(StateConstant.END_STATE));
             hitStates.add(obtainState(StateConstant.SHOW_GROUP_MENU));
             hitStates.add(obtainState(StateConstant.SEND_MSG));
         }else if(state == StateConstant.SHOW_GROUP_MENU){
