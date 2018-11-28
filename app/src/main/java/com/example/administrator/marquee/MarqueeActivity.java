@@ -82,12 +82,19 @@ public class MarqueeActivity extends Activity {
         testRankView();
     }
 
+
     private void testRankView() {
         findViewById(R.id.test_rank_view).setOnClickListener(new View.OnClickListener() {
+            int count = 0;
             @Override
             public void onClick(View v) {
                 LiveDailyRankView rankView = findViewById(R.id.live_daily_rank_view);
-                rankView.startRankUpdateAnimation();
+                if(count % 2 == 0) {
+                    rankView.startIncomeUpdateAnimation();
+                }else{
+                    rankView.startRankUpdateAnimation();
+                }
+                count++;
             }
         });
     }

@@ -87,8 +87,6 @@
     <com.example.administrator.marquee.LiveDailyRankView
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:marqueeTextSize="@dimen/sp11"
         app:text="Daily Top 20"
         android:id="@+id/live_daily_rank_view"

@@ -43,7 +43,12 @@ public class LiveDailyRankView extends FrameLayout {
     private FrameLayout.LayoutParams mTextViewParams;
     private FrameLayout mTextViewLayout;
     private float mStartTvX;
-    private int mStartLeft;
+    private int mStartTvLeft;
+    private boolean mIsRankAnimationRunning = false;
+    private boolean mIsIncomeAnimationRunning = false;
+    private String mIncomePostText;
+    private int mStartIncome;
+    private int mEndIncome;
 
     public LiveDailyRankView(Context context) {
         super(context);
@@ -105,14 +110,18 @@ public class LiveDailyRankView extends FrameLayout {
                     getResources().getDimensionPixelSize(R.dimen.sp11)));
             ta.recycle();
         }
-        setText("Daily Top.29", "1110,000 beans from 10th 10,000 beans from 10th");
+        setNormalText("Daily Top.29");
+        setMarqueeText("1110,000 beans from 10th 10,000 beans from 10th");
+        setIncomeData(5000, 6000, " beans");
     }
 
-    public void setText(String normalText, String marqueeText) {
+    public void setNormalText(String normalText){
         mNormalText = normalText;
-        mMarqueeText = marqueeText;
-
         mTextView.setText(mNormalText);
+    }
+
+    public void setMarqueeText(String marqueeText) {
+        mMarqueeText = marqueeText;
     }
 
     private void addMarqueeBgView() {
@@ -162,26 +171,103 @@ public class LiveDailyRankView extends FrameLayout {
         mTextViewLayout.addView(mTextView);
     }
 
-    public void startRankUpdateAnimation(){
-        mAnimator = ValueAnimator.ofInt(0, 1480);
-        mAnimator.setDuration(20000);
+    public boolean isAnimationRunning(){
+        return mIsRankAnimationRunning || mIsIncomeAnimationRunning;
+    }
+
+    public boolean startIncomeUpdateAnimation(){
+        if(isAnimationRunning()){
+            return false;
+        }
+        mAnimator = ValueAnimator.ofInt(0, 1000);
+        mAnimator.setDuration(3400);
         mAnimator.setInterpolator(new LinearInterpolator());
-        Log.d(TAG, "rootwidth=" + getWidth() + " tvleft=" + mTextView.getLeft() + " tvright="+ mTextView.getRight()
-                + " tvW=" + mTextView.getWidth() + " normalTextW=" + mTextView.getPaint().measureText(mNormalText)
-                + " marqueeTextW=" + mTextView.getPaint().measureText(mMarqueeText) + " tvX=" + mTextView.getX() + " tvalpha=" + mTextView.getAlpha());
-        mStartTvX = mTextView.getX();
-        mStartLeft = mTextViewParams.leftMargin;
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int time = (int) animation.getAnimatedValue();
-                handleAnimationUpdate(time, true);
+                handleIncomeAnimationUpdate(time);
             }
         });
         mAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
+                mIsIncomeAnimationRunning = true;
+            }
 
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mIsIncomeAnimationRunning = false;
+                mTextView.setAlpha(1);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                mIsIncomeAnimationRunning = false;
+                mTextView.setAlpha(1);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        mAnimator.start();
+        return true;
+    }
+
+    public void setIncomeData(int startIncome, int endIncome, String incomeText){
+        mIncomePostText = incomeText;
+        mStartIncome = startIncome;
+        mEndIncome = endIncome;
+    }
+
+    private void handleIncomeAnimationUpdate(int time) {
+        if(time < 100){ //0-10f 黄色文字透明度消失
+            mTextView.setAlpha(1 - time / 100f);
+        }
+        if(time >= 100 && time < 200){//10-20f 黄色文字透明度0-100
+            int tempTime = time - 100;
+            mTextView.setText(mStartIncome + mIncomePostText);
+            mTextView.setAlpha(tempTime / 100f);
+        }
+        if(time >= 200 && time < 800){
+            int tempTime = time - 200;
+            int currIncome = (int) (mStartIncome + tempTime / 600f * (mEndIncome - mStartIncome) + 0.5);
+            mTextView.setText(currIncome + mIncomePostText);
+        }
+        if(time >= 800 && time < 900){//10-20f 黄色文字透明度0-100
+            int tempTime = time - 800;
+            mTextView.setText(mEndIncome + mIncomePostText);
+            mTextView.setAlpha(1 - tempTime / 100f);
+        }
+        if(time >= 900 && time < 1000){ //0-10f 黄色文字透明度消失
+            int tempTime = time - 800;
+            mTextView.setAlpha(tempTime / 100f);
+            mTextView.setText(mNormalText);
+        }
+    }
+
+    public boolean startRankUpdateAnimation(){
+        if(isAnimationRunning()){
+            return false;
+        }
+        mAnimator = ValueAnimator.ofInt(0, 1480);
+        mAnimator.setDuration(5000);
+        mAnimator.setInterpolator(new LinearInterpolator());
+        mStartTvX = mTextView.getX();
+        mStartTvLeft = mTextViewParams.leftMargin;
+        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int time = (int) animation.getAnimatedValue();
+                handleRankAnimationUpdate(time, true);
+            }
+        });
+        mAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                mIsRankAnimationRunning = true;
             }
 
             @Override
@@ -191,14 +277,17 @@ public class LiveDailyRankView extends FrameLayout {
                 mNormalBgView.setAlpha(1);
                 mParams.width = mInitWidth;
                 setLayoutParams(mParams);
-                Log.d(TAG, "rootwidth=" + getWidth() + " tvleft=" + mTextView.getLeft() + " tvright="+ mTextView.getRight()
-                        + " tvW=" + mTextView.getWidth() + " normalTextW=" + mTextView.getPaint().measureText(mNormalText)
-                        + " marqueeTextW=" + mTextView.getPaint().measureText(mMarqueeText) + " tvX=" + mTextView.getX() + " tvalpha=" + mTextView.getAlpha());
+                mIsRankAnimationRunning = false;
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
-
+                mTextView.setAlpha(1);
+                mMarqueeBgView.setAlpha(0);
+                mNormalBgView.setAlpha(1);
+                mParams.width = mInitWidth;
+                setLayoutParams(mParams);
+                mIsRankAnimationRunning = false;
             }
 
             @Override
@@ -207,9 +296,10 @@ public class LiveDailyRankView extends FrameLayout {
             }
         });
         mAnimator.start();
+        return true;
     }
 
-    private void handleAnimationUpdate(int time, boolean isShowMarquee) {
+    private void handleRankAnimationUpdate(int time, boolean isShowMarquee) {
         if (time <= 100) {//0-10f  字体透明度100-0
             mTextView.setAlpha(1 - time * 1.0f / 100);
         }
@@ -255,14 +345,14 @@ public class LiveDailyRankView extends FrameLayout {
             mTextViewParams.gravity = Gravity.CENTER;
             mTextView.setTextColor(mNormalTextColor);
             mTextViewParams.width = (int) mTextView.getPaint().measureText(mNormalText);
-            mTextViewParams.leftMargin = mStartLeft;
+            mTextViewParams.leftMargin = mStartTvLeft;
             mTextView.setLayoutParams(mTextViewParams);
             mTextView.setAlpha(tempTime / 100f);
             mTextView.setX(mStartTvX);
         }
-        Log.d(TAG, "rootwidth=" + getWidth() + " tvleft=" + mTextView.getLeft() + " tvright="+ mTextView.getRight()
-                + " tvW=" + mTextView.getWidth() + " normalTextW=" + mTextView.getPaint().measureText(mNormalText)
-                + " marqueeTextW=" + mTextView.getPaint().measureText(mMarqueeText) + " tvX=" + mTextView.getX() + " tvalpha=" + mTextView.getAlpha() + " time=" + time);
+//        Log.d(TAG, "rootwidth=" + getWidth() + " tvleft=" + mTextView.getLeft() + " tvright="+ mTextView.getRight()
+//                + " tvW=" + mTextView.getWidth() + " normalTextW=" + mTextView.getPaint().measureText(mNormalText)
+//                + " marqueeTextW=" + mTextView.getPaint().measureText(mMarqueeText) + " tvX=" + mTextView.getX() + " tvalpha=" + mTextView.getAlpha() + " time=" + time);
     }
 
 }
