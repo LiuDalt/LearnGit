@@ -15,6 +15,11 @@ public class TestArray {
                 iterator.remove();
             }
         }
+        try{
+            int a = 1 / 0;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         System.out.println(list);
     }
 }

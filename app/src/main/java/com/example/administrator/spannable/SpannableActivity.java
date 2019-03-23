@@ -10,7 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
+import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
@@ -34,12 +36,15 @@ import android.text.style.TextAppearanceSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.administrator.myapplication.MainActivity;
 import com.example.administrator.myapplication.R;
+
+import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 
 public class SpannableActivity extends Activity {
 
@@ -176,6 +181,40 @@ public class SpannableActivity extends Activity {
         // 设置点击后的颜色，这里涉及到ClickableSpan的点击背景
         textView.setHighlightColor(getResources().getColor(android.R.color.transparent));
 
+
+
         textView.setText(spannableString);
+
+        handleTv2();
+    }
+
+    private void handleTv2() {
+        TextView textView = findViewById(R.id.spannable_tv2);
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append("中国");
+        SpannableString spannableString = new SpannableString("12345");
+        spannableString.setSpan(new ImageSpan(this, R.drawable.beauty), 0, 5, SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.append(spannableString);
+        builder.append("abc");
+        textView.setText(builder);
+
+        StaticLayout layout = new StaticLayout(builder, textView.getPaint(), 1000, Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("spannablestring", "tv width=" + textView.getWidth() + " staticly=" + layout.getLineWidth(0));
+                    }
+                });
+            }
+        }).start();
+
     }
 }

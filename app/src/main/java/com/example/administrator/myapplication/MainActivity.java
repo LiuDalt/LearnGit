@@ -13,6 +13,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.LocaleList;
 import android.os.Looper;
+import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
@@ -38,6 +41,9 @@ import com.example.administrator.aac.TestAACActivity;
 import com.example.administrator.animate.AnimateActivity;
 import com.example.administrator.drawable.DrawableActivity;
 import com.example.administrator.font.FontActivity;
+import com.example.administrator.json.JsonTest;
+import com.example.administrator.languagecountry.LiveLanguageCountry;
+import com.example.administrator.languagecountry.LiveLanguageCountryHelper;
 import com.example.administrator.layoutopt.LayoutOptActivity;
 import com.example.administrator.mannotation.IdInject;
 import com.example.administrator.mannotation.IdInjectHelper;
@@ -53,9 +59,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
@@ -81,12 +93,16 @@ public class MainActivity extends AppCompatActivity {
 
     @IdInject(R.id.test_get_number)
     private Button mGetPhone;
+    private TestData mTestData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mTestData = new TestData();
+        mTestData.map.put("123", 345);
+        mTestData.map.put("345", 567);
         mRootLy = findViewById(R.id.rootly);
 //        dataBinding();
         mRootLy.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -171,6 +187,75 @@ public class MainActivity extends AppCompatActivity {
         testSpannable();
 
         testMarquee();
+
+        testGetAnr();
+
+        testHandler();
+
+        JsonTest.test();
+        String str = getResources().getString(getResources().getIdentifier("overall_tab", "string", getPackageName()));
+        Log.d("getIdentifier", "str=" + str);
+    }
+
+    private void testHandler() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("testHandler", "firstPostDelay----");
+            }
+        }, 1000);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("testHandler", "sencondPost----");
+            }
+        });
+        handler.postAtFrontOfQueue(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("testHandler", "ThirdPostAtFront----");
+            }
+        });
+
+    }
+
+    private void testGetAnr() {
+        findViewById(R.id.get_anr_log).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        File dir = getFilesDir();
+                        File dataDir = dir.getParentFile().getParentFile().getParentFile().getParentFile();
+                        String path = dataDir.getAbsolutePath() + "/anr/";
+                        File dd = new File(dataDir, "anr");
+                        File[] files = dd.listFiles();
+                        for(File file : files){
+                            Log.i("testGetAnr", "fileName=" + file.getName());
+                        }
+                        Runtime mRuntime = Runtime.getRuntime();
+                        try {
+                            //Process中封装了返回的结果和执行错误的结果
+                            Process mProcess = mRuntime.exec("ls data/anr/");
+                            BufferedReader mReader = new BufferedReader(new InputStreamReader(mProcess.getInputStream()));
+                            StringBuffer mRespBuff = new StringBuffer();
+                            char[] buff = new char[1024];
+                            int ch = 0;
+                            while ((ch = mReader.read(buff)) != -1) {
+                                mRespBuff.append(buff, 0, ch);
+                            }
+                            mReader.close();
+                            Log.i("testGetAnr", mRespBuff.toString());
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+            }
+        });
     }
 
     private void testMarquee() {
@@ -393,7 +478,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(bool1() || bool2() || bool3()){
 
+        }
         testJSon();
     }
 
@@ -453,6 +540,67 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(runnable, 2000);
     }
 
+    public static class TestData implements Parcelable{
+        public Map map = new HashMap<String, Integer>();
+
+        protected TestData(Parcel in) {
+            in.readMap(map, HashMap.class.getClassLoader());
+        }
+
+        public TestData(){}
+
+        public static final Creator<TestData> CREATOR = new Creator<TestData>() {
+            @Override
+            public TestData createFromParcel(Parcel in) {
+                return new TestData(in);
+            }
+
+            @Override
+            public TestData[] newArray(int size) {
+                return new TestData[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeMap(map);
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i("testData", mTestData.toString());
+        outState.putParcelable("testdata", mTestData);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mTestData = savedInstanceState.getParcelable("testdata");
+        Log.i("testData", mTestData.toString());
+    }
+
+    public boolean bool2(){
+        Log.d(TAG, "bool2() called");
+        return true;
+    }
+
+    public boolean bool3(){
+        Log.d(TAG, "bool3() called");
+        return true;
+    }
+    public boolean bool1(){
+        Log.d(TAG, "bool1() called");
+        return true;
+    }
+
     private void testAnnotation() {
         IdInjectHelper.inject(this);//通过注解获取view
         mAnnotationBtn.setText("这是个注解的button");
@@ -463,6 +611,12 @@ public class MainActivity extends AppCompatActivity {
         mLinearLayout.addView(button);
         IdInjectHelper.inject(this, button.getId());//通过注解获取动态view
         mDynAnnotationBtn.setText("这是个动态的注解button");
+        try{
+            int a = 1 / 0;
+            button.setText(a);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void testAAC() {
@@ -471,6 +625,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, TestAACActivity.class);
                 startActivity(intent);
+                LiveLanguageCountry.paseFromJson(LiveLanguageCountryHelper.sTestJson);
             }
         });
     }

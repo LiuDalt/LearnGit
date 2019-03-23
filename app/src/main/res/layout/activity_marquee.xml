@@ -87,8 +87,6 @@
     <com.example.administrator.marquee.LiveDailyRankView
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:marqueeTextSize="@dimen/sp11"
-        app:text="Daily Top 20"
         android:id="@+id/live_daily_rank_view"
         android:layout_width="@dimen/live_daily_rank_normal_width"
         android:layout_height="@dimen/live_daily_rank_normal_height"></com.example.administrator.marquee.LiveDailyRankView>
@@ -97,6 +95,30 @@
         android:text="测试"
         android:id="@+id/test_rank_view"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+    <!--<com.example.administrator.layout.StaticLayoutView-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+    <com.example.administrator.marquee.LiveMarqueeMTextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="200dp"
+        android:maxLines="1"
+        android:text="sadfsadfaslsdaaaaaaafa士大夫撒发发声方式大三大法师的撒旦法sd"
+        android:layout_width="200dp"
+        android:id="@+id/test_livemarquee"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/start_marquee"
+        android:text="开始走马灯"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

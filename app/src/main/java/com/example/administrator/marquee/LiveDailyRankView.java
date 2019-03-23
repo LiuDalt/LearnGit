@@ -18,6 +18,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+
 import com.example.administrator.myapplication.R;
 
 import static android.graphics.drawable.GradientDrawable.RECTANGLE;
@@ -78,14 +79,19 @@ public class LiveDailyRankView extends FrameLayout {
                 }
                 mMarqueeDrawable.setCornerRadius(getHeight() / 2);
                 mNormalBgDrawable.setCornerRadius(getHeight() / 2);
-                mMarqueeBgView.setBackground(mMarqueeDrawable);
-                mNormalBgView.setBackground(mNormalBgDrawable);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    mMarqueeBgView.setBackground(mMarqueeDrawable);
+                    mNormalBgView.setBackground(mNormalBgDrawable);
+                }else{
+                    mMarqueeBgView.setBackgroundDrawable(mMarqueeDrawable);
+                    mNormalBgView.setBackgroundDrawable(mNormalBgDrawable);
+                }
 
-                FrameLayout.LayoutParams params = (LayoutParams) mTextViewLayout.getLayoutParams();
+
+                LayoutParams params = (LayoutParams) mTextViewLayout.getLayoutParams();
                 params.leftMargin = getHeight() / 2;
                 params.rightMargin = getHeight() / 2;
                 mTextViewLayout.setLayoutParams(params);
-
                 mTextViewParams = (LayoutParams) mTextView.getLayoutParams();
 
                 mParams = getLayoutParams();
@@ -96,18 +102,19 @@ public class LiveDailyRankView extends FrameLayout {
     }
 
     private void init(AttributeSet attrs) {
-        mMarqueeTextColor = getResources().getColor(R.color.live_daily_marquee_tv_color);
         addNormalBgView();
         addMarqueeBgView();
         addTextView();
-        TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.LiveMarqueeTextView);
+        TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.LiveDailyRankView);
         if(ta != null) {
-            mNormalTextColor = ta.getColor(R.styleable.LiveMarqueeTextView_marqueeTextColor,
+            mNormalTextColor = ta.getColor(R.styleable.LiveDailyRankView_normalTextColor,
                     getResources().getColor(R.color.live_daily_rank_normal_tv_color));
+            mMarqueeTextColor = ta.getColor(R.styleable.LiveDailyRankView_rankMarqueeTextColor,
+                    getResources().getColor(R.color.live_daily_marquee_tv_color));
             mTextView.setTextColor(mNormalTextColor);
             mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    ta.getDimensionPixelSize(R.styleable.LiveMarqueeTextView_marqueeTextSize,
-                    getResources().getDimensionPixelSize(R.dimen.sp11)));
+                    ta.getDimensionPixelSize(R.styleable.LiveDailyRankView_normalTextSize,
+                            getResources().getDimensionPixelSize(R.dimen.sp11)));
             ta.recycle();
         }
         setNormalText("Daily Top.29");
@@ -126,21 +133,25 @@ public class LiveDailyRankView extends FrameLayout {
 
     private void addMarqueeBgView() {
         mMarqueeBgView = new View(getContext());
-        mMarqueeBgViewParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mMarqueeBgViewParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mMarqueeBgView.setLayoutParams(mMarqueeBgViewParams);
         int colors[] = { getResources().getColor(R.color.live_daily_rank_marquee_start_corlor),
                 getResources().getColor(R.color.live_daily_rank_marquee_end_corlor) };
         mMarqueeDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
         mMarqueeDrawable.setShape(RECTANGLE);
         mMarqueeDrawable.setCornerRadius(getWidth() / 2);
-        mMarqueeBgView.setBackground(mMarqueeDrawable);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mMarqueeBgView.setBackground(mMarqueeDrawable);
+        }else{
+            mMarqueeBgView.setBackgroundDrawable(mMarqueeDrawable);
+        }
         mMarqueeBgView.setAlpha(0);
         addView(mMarqueeBgView);
     }
 
     private void addNormalBgView() {
         mNormalBgView = new View(getContext());
-        mNormalBgViewParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mNormalBgViewParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mNormalBgView.setLayoutParams(mNormalBgViewParams);
 
 
@@ -148,7 +159,11 @@ public class LiveDailyRankView extends FrameLayout {
         mNormalBgDrawable.setShape(RECTANGLE);
         mNormalBgDrawable.setCornerRadius(getWidth() / 2);
         mNormalBgDrawable.setColor(getResources().getColor(R.color.live_daily_rank_normal_color));
-        mNormalBgView.setBackground(mNormalBgDrawable);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mNormalBgView.setBackground(mNormalBgDrawable);
+        }else{
+            mNormalBgView.setBackgroundDrawable(mNormalBgDrawable);
+        }
 
         addView(mNormalBgView);
     }
@@ -175,7 +190,7 @@ public class LiveDailyRankView extends FrameLayout {
         return mIsRankAnimationRunning || mIsIncomeAnimationRunning;
     }
 
-    public boolean startIncomeUpdateAnimation(){
+    public boolean startIncomeUpdateAnimation(final Animator.AnimatorListener animatorListener){
         if(isAnimationRunning()){
             return false;
         }
@@ -187,29 +202,43 @@ public class LiveDailyRankView extends FrameLayout {
             public void onAnimationUpdate(ValueAnimator animation) {
                 int time = (int) animation.getAnimatedValue();
                 handleIncomeAnimationUpdate(time);
+                if(animatorListener != null){
+                    animatorListener.onAnimationStart(animation);
+                }
             }
         });
         mAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
                 mIsIncomeAnimationRunning = true;
+                if(animatorListener != null){
+                    animatorListener.onAnimationStart(animation);
+                }
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
                 mIsIncomeAnimationRunning = false;
                 mTextView.setAlpha(1);
+                if(animatorListener != null){
+                    animatorListener.onAnimationEnd(animation);
+                }
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
                 mIsIncomeAnimationRunning = false;
                 mTextView.setAlpha(1);
+                if(animatorListener != null){
+                    animatorListener.onAnimationCancel(animation);
+                }
             }
 
             @Override
             public void onAnimationRepeat(Animator animation) {
-
+                if(animatorListener != null){
+                    animatorListener.onAnimationRepeat(animation);
+                }
             }
         });
         mAnimator.start();
@@ -248,7 +277,7 @@ public class LiveDailyRankView extends FrameLayout {
         }
     }
 
-    public boolean startRankUpdateAnimation(){
+    public boolean startRankUpdateAnimation(final Animator.AnimatorListener animatorListener){
         if(isAnimationRunning()){
             return false;
         }
@@ -257,6 +286,8 @@ public class LiveDailyRankView extends FrameLayout {
         mAnimator.setInterpolator(new LinearInterpolator());
         mStartTvX = mTextView.getX();
         mStartTvLeft = mTextViewParams.leftMargin;
+        Log.d(TAG, "rootwidth=" + getWidth() + " tvleft=" + mTextView.getLeft() + " tvright="+ mTextView.getRight()
+                + " tvW=" + mTextView.getWidth() + " tvX=" + mTextView.getX() + " tvalpha=" + mTextView.getAlpha());
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -268,6 +299,9 @@ public class LiveDailyRankView extends FrameLayout {
             @Override
             public void onAnimationStart(Animator animation) {
                 mIsRankAnimationRunning = true;
+                if(animatorListener != null){
+                    animatorListener.onAnimationStart(animation);
+                }
             }
 
             @Override
@@ -278,6 +312,11 @@ public class LiveDailyRankView extends FrameLayout {
                 mParams.width = mInitWidth;
                 setLayoutParams(mParams);
                 mIsRankAnimationRunning = false;
+                if(animatorListener != null){
+                    animatorListener.onAnimationEnd(animation);
+                }
+                Log.d(TAG, "rootwidth=" + getWidth() + " tvleft=" + mTextView.getLeft() + " tvright="+ mTextView.getRight()
+                        + " tvW=" + mTextView.getWidth() + " tvX=" + mTextView.getX() + " tvalpha=" + mTextView.getAlpha());
             }
 
             @Override
@@ -288,11 +327,16 @@ public class LiveDailyRankView extends FrameLayout {
                 mParams.width = mInitWidth;
                 setLayoutParams(mParams);
                 mIsRankAnimationRunning = false;
+                if(animatorListener != null){
+                    animatorListener.onAnimationCancel(animation);
+                }
             }
 
             @Override
             public void onAnimationRepeat(Animator animation) {
-
+                if(animatorListener != null){
+                    animatorListener.onAnimationRepeat(animation);
+                }
             }
         });
         mAnimator.start();
@@ -315,6 +359,7 @@ public class LiveDailyRankView extends FrameLayout {
             mTextView.setText(mMarqueeText);
             mTextViewParams.width = (int) mTextView.getPaint().measureText(mMarqueeText);
             mTextViewParams.gravity = Gravity.START | Gravity.LEFT | Gravity.CENTER_VERTICAL;
+            mTextView.setLayoutParams(mTextViewParams);
             mTextView.setTextColor(mMarqueeTextColor);
             mTextView.setAlpha(tempTime * 1.0f / 100);
             Log.d(TAG, "");
@@ -339,20 +384,27 @@ public class LiveDailyRankView extends FrameLayout {
             mParams.width = (int) ((mMaxWidth - mInitWidth) * (100 - tempTime) / 100f + mInitWidth);
             setLayoutParams(mParams);
         }
-        if(time >= 1380 && time < 1480f){//黄色文字透明度0-100
+        if(time >= 1380 && time <= 1480f){//黄色文字透明度0-100
             int tempTime = time - 1380;
             mTextView.setText(mNormalText);
             mTextViewParams.gravity = Gravity.CENTER;
             mTextView.setTextColor(mNormalTextColor);
             mTextViewParams.width = (int) mTextView.getPaint().measureText(mNormalText);
-            mTextViewParams.leftMargin = mStartTvLeft;
+            mTextViewParams.leftMargin = -1;
+            mTextViewParams.rightMargin = -1;
             mTextView.setLayoutParams(mTextViewParams);
             mTextView.setAlpha(tempTime / 100f);
             mTextView.setX(mStartTvX);
         }
-//        Log.d(TAG, "rootwidth=" + getWidth() + " tvleft=" + mTextView.getLeft() + " tvright="+ mTextView.getRight()
-//                + " tvW=" + mTextView.getWidth() + " normalTextW=" + mTextView.getPaint().measureText(mNormalText)
-//                + " marqueeTextW=" + mTextView.getPaint().measureText(mMarqueeText) + " tvX=" + mTextView.getX() + " tvalpha=" + mTextView.getAlpha() + " time=" + time);
+        Log.d(TAG, "rootwidth=" + getWidth() + " tvleft=" + mTextView.getLeft() + " tvright="+ mTextView.getRight()
+                + " tvW=" + mTextView.getWidth() + " tvX=" + mTextView.getX() + " tvalpha=" + mTextView.getAlpha() + " time=" + time);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if(isAnimationRunning() && mAnimator != null && mAnimator.isRunning()){
+            mAnimator.end();
+        }
+    }
 }

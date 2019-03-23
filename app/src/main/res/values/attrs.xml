@@ -18,4 +18,9 @@
         <attr name="marqueeTextSize" format="dimension"></attr>
         <attr name="marqueeTextColor" format="color"></attr>
     </declare-styleable>
+    <declare-styleable name="LiveDailyRankView">
+        <attr name="normalTextSize" format="dimension"></attr>
+        <attr name="rankMarqueeTextColor" format="color"></attr>
+        <attr name="normalTextColor" format="color"></attr>
+    </declare-styleable>
 </resources>

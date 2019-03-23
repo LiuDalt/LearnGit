@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewStub;
@@ -27,6 +29,8 @@ public class MarqueeActivity extends Activity {
         TextView showTextTv = findViewById(R.id.show_text_tv);
         Button setTextBtn = findViewById(R.id.set_text_btn);
         Button showTextBtn = findViewById(R.id.show_text_btn);
+
+        testLayout();
 
         findViewById(R.id.start_pause_marquee).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +84,34 @@ public class MarqueeActivity extends Activity {
 
         testCustMarquee();
         testRankView();
+
+        testMarquee();
+    }
+
+    private void testMarquee() {
+        Button button = findViewById(R.id.start_marquee);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LiveMarqueeMTextView marqueeMTextView = findViewById(R.id.test_livemarquee);
+                marqueeMTextView.startMarquee(1, new LiveMarqueeMTextView.MarqueeListener() {
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "LiveMarqueeMTextView onComplete() called");
+//                        marqueeMTextView.setEllipsize(TextUtils.TruncateAt.END);
+                    }
+
+                    @Override
+                    public void onStart() {
+                        Log.d(TAG, "LiveMarqueeMTextView onStart() called");
+                    }
+                });
+            }
+        });
+    }
+
+    private void testLayout() {
+
     }
 
 
@@ -90,9 +122,49 @@ public class MarqueeActivity extends Activity {
             public void onClick(View v) {
                 LiveDailyRankView rankView = findViewById(R.id.live_daily_rank_view);
                 if(count % 2 == 0) {
-                    rankView.startIncomeUpdateAnimation();
+//                    rankView.startIncomeUpdateAnimation(new Animator.AnimatorListener() {
+//                        @Override
+//                        public void onAnimationStart(Animator animation) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onAnimationEnd(Animator animation) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onAnimationCancel(Animator animation) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onAnimationRepeat(Animator animation) {
+//
+//                        }
+//                    });
                 }else{
-                    rankView.startRankUpdateAnimation();
+                    rankView.startRankUpdateAnimation(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
                 }
                 count++;
             }
