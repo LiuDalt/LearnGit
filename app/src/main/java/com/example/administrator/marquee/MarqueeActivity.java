@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewStub;
@@ -93,8 +91,9 @@ public class MarqueeActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LiveMarqueeMTextView marqueeMTextView = findViewById(R.id.test_livemarquee);
-                marqueeMTextView.startMarquee(1, new LiveMarqueeMTextView.MarqueeListener() {
+                MarqueeTextView marqueeTextView = findViewById(R.id.test_livemarquee);
+                marqueeTextView.setWidth(400);
+                marqueeTextView.setListener(new MarqueeTextView.MarqueeListener() {
                     @Override
                     public void onComplete() {
                         Log.d(TAG, "LiveMarqueeMTextView onComplete() called");
@@ -105,7 +104,23 @@ public class MarqueeActivity extends Activity {
                     public void onStart() {
                         Log.d(TAG, "LiveMarqueeMTextView onStart() called");
                     }
+
+                    @Override
+                    public void onStop() {
+                        Log.d(TAG, "LiveMarqueeMTextView onStop() called");
+                    }
+
+                    @Override
+                    public void onRepeatMarquee(int remainRepeatTimes) {
+                        Log.d(TAG, "LiveMarqueeMTextView onRepeatMarquee() called remainRepeatTimes=" + remainRepeatTimes);
+                    }
                 });
+                marqueeTextView.startMarquee(3, 1000);
+//                if(marqueeTextView.isMarqueeRunning()){
+//                    marqueeTextView.stopMarquee();
+//                } else {
+//
+//                }
             }
         });
     }

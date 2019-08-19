@@ -5,5 +5,7 @@ public class TestString {
         String str1 = (String)null;
         String str2 = null;
         System.out.println(str1 + " " + str2 + " " + (str1 != null));
+
+        System.out.println("abcd".indexOf(""));
     }
 }

@@ -190,15 +190,69 @@ public class MainActivity extends AppCompatActivity {
 
         testGetAnr();
 
-        testHandler();
+//        testHandler();
+
+        testRecyclerView();
 
         JsonTest.test();
         String str = getResources().getString(getResources().getIdentifier("overall_tab", "string", getPackageName()));
         Log.d("getIdentifier", "str=" + str);
+
+        testPK();
+
+        testNine();
+
+    }
+
+    private void testNine() {
+        findViewById(R.id.test_nine).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TestNineActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void testPK() {
+        findViewById(R.id.test_pk).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PkActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void testRecyclerView() {
+        findViewById(R.id.test_recyclerView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TestRecyclerViewActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void testHandler() {
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("testHandler", "msg in 5s----");
+            }
+        }, 5000);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("testHandler", "msg in 10s----");
+            }
+        }, 10000);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {

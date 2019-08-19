@@ -106,13 +106,12 @@
         <!--android:layout_width="200dp"-->
         <!--android:layout_height="wrap_content"/>-->
 
-    <com.example.administrator.marquee.LiveMarqueeMTextView
+    <com.example.administrator.marquee.MarqueeTextView
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginTop="200dp"
-        android:maxLines="1"
-        android:text="sadfsadfaslsdaaaaaaafa士大夫撒发发声方式大三大法师的撒旦法sd"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
+        android:text="hello world HELLO WORLD Hello World"
         android:id="@+id/test_livemarquee"
         android:layout_height="wrap_content"/>
 
